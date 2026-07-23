@@ -1,21 +1,159 @@
-// use prisma-next
-
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt DateTime @default(now())
-  updatedAt temporal.updatedAt()
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  name         String
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at")
+  drills       Drill[]      
+  ownedGroups  Group[]
+  bookmark     Bookmark?
+  groupUser    GroupUser?
+  invitations  Invitation[]
+  setting      Setting?
+
+  @@map("users")
 }
 
-model Post {
+model Category {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  drills  Drill[]
+
+  @@map("categories")
+}
+
+model Drill {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  categoryId  Int       @map("category_id")
+  title       String
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  user       User          @relation(fields: [userId], references: [id])
+  category   Category      @relation(fields: [categoryId], references: [id])
+  questions  Question[]
+  drillTag   DrillTag?
+  bookmark   Bookmark?
+  share      Share?
+
+  @@map("drills")
+}
+
+model Question {
+  id        Int            @id @default(autoincrement())
+  drillId   Int            @map("drill_id")
+  sortIndex Int            @map("sort_index")
+  body      String
+
+  drill   Drill            @relation(fields: [drillId], references: [id])
+  choices QuestionChoice[]
+
+  @@map("questions")
+}
+
+model QuestionChoice {
+  id         Int     @id @default(autoincrement())
+  questionId Int     @map("question_id")
+  sortIndex  Int     @map("sort_index")
+  body       String
+  isCorrect  Boolean @default(false) @map("is_correct")
+
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@map("question_choices")
+}
+
+model Tag {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  drillTag DrillTag?
+
+  @@map("tags")
+}
+
+model DrillTag {
+  id      Int @id @default(autoincrement())
+  drillId Int @unique @map("drill_id")
+  tagId   Int @unique @map("tag_id")
+
+  drill Drill @relation(fields: [drillId], references: [id])
+  tag   Tag   @relation(fields: [tagId], references: [id])
+
+  @@map("drill_tags")
+}
+
+model Bookmark {
   id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt DateTime @default(now())
-  updatedAt temporal.updatedAt()
+  userId    Int      @unique @map("user_id")
+  drillId   Int      @unique @map("drill_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id])
+  drill Drill @relation(fields: [drillId], references: [id])
+
+  @@map("bookmarks")
+}
+
+model Group {
+  id         Int         @id @default(autoincrement())
+  ownerId    Int         @map("owner_id")
+  name       String
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
+  groupUser  GroupUser?
+  invitations Invitation[]
+  share      Share?
+
+  owner User @relation(fields: [ownerId], references: [id])
+
+  @@map("groups")
+}
+
+model GroupUser {
+  id      Int @id @default(autoincrement())
+  groupId Int @unique @map("group_id")
+  userId  Int @unique @map("user_id")
+
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@map("group_users")
+}
+
+model Invitation {
+  id        Int      @id @default(autoincrement())
+  groupId   Int      @map("group_id")
+  userId    Int      @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@map("invitations")
+}
+
+model Share {
+  id        Int      @id @default(autoincrement())
+  drillId   Int      @unique @map("drill_id")
+  groupId   Int      @unique @map("group_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  drill Drill @relation(fields: [drillId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@map("shares")
+}
+
+model Setting {
+  id                    Int     @id @default(autoincrement())
+  userId                Int     @unique @map("user_id")
+  isNotificationEnabled Boolean @default(true) @map("is_notification_enabled")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("settings")
 }
