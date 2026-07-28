@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+model User {
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  name         String
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt
+  drills       Drill[]      
+  ownedGroups  Group[]
+  bookmark     Bookmark[]
+  groupUser    GroupUser[]
+  invitations  Invitation[]
+  setting      Setting?
+
+  @@map("users")
+}
+
+model Category {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  drills  Drill[]
+
+  @@map("categories")
+}
+
+model Drill {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  categoryId  Int       @map("category_id")
+  title       String
+  description String
+  /**非公開中はnull*/
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt
+
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  questions  Question[]
+  drillTag   DrillTag[]
+  bookmark   Bookmark[]
+  share      Share[]
+
+  @@map("drills")
+}
+
+model Question {
+  id        Int            @id @default(autoincrement())
+  drillId   Int            @map("drill_id")
+  sortIndex Int            @map("sort_index")
+  body      String
+
+  drill   Drill            @relation(fields: [drillId], references: [id], onDelete: Cascade)
+  choices QuestionChoice[]
+
+  @@map("questions")
+}
+
+model QuestionChoice {
+  id         Int     @id @default(autoincrement())
+  questionId Int     @map("question_id")
+  sortIndex  Int     @map("sort_index")
+  body       String
+  isCorrect  Boolean @default(false) @map("is_correct")
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_choices")
+}
+
+model Tag {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  drillTag DrillTag[]
+
+  @@map("tags")
+}
+
+model DrillTag {
+  id      Int @id @default(autoincrement())
+  drillId Int @map("drill_id")
+  tagId   Int @map("tag_id")
+
+  drill Drill @relation(fields: [drillId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@map("drill_tags")
+
+  @@unique([drillId, tagId])
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  drillId   Int      @map("drill_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drill Drill @relation(fields: [drillId], references: [id], onDelete: Cascade)
+
+  @@map("bookmarks")
+
+  @@unique([userId, drillId])
+}
+
+model Group {
+  id         Int         @id @default(autoincrement())
+  ownerId    Int         @map("owner_id")
+  name       String
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt
+
+  groupUser  GroupUser[]
+  invitations Invitation[]
+  share      Share[]
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("groups")
+}
+
+model GroupUser {
+  id      Int @id @default(autoincrement())
+  groupId Int @map("group_id")
+  userId  Int @map("user_id")
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("group_users")
+
+  @@unique([groupId, userId])
+}
+
+model Invitation {
+  id        Int      @id @default(autoincrement())
+  groupId   Int      @map("group_id")
+  userId    Int      @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("invitations")
+
+  @@unique([groupId, userId])
+}
+
+model Share {
+  id        Int      @id @default(autoincrement())
+  drillId   Int      @map("drill_id")
+  groupId   Int      @map("group_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  drill Drill @relation(fields: [drillId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("shares")
+
+  @@unique([drillId, groupId])
+}
+
+model Setting {
+  id                    Int     @id @default(autoincrement())
+  userId                Int     @unique @map("user_id")
+  isNotificationEnabled Boolean @default(true) @map("is_notification_enabled")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("settings")
+}
