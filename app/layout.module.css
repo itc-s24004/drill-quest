@@ -11,7 +11,12 @@
     devを中央に置く
     背景を白
     */
-    
-    border: 2px solid #ffffff; 
+
+    border: 2px solid #ffffff;
     /*わかりやすいように仮で外枠白くしてます*/
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 16px;
 }
