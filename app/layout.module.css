@@ -1,0 +1,17 @@
+.contentRoot {
+    min-height: 95vh;
+    width: 900px;
+    max-width: 100%;
+    margin: auto auto;
+    background-color: #ffffff;
+    /*
+    縦の高さを画面の95%にする
+    横幅を画面1920の半分くらいの900pxに指定
+    横幅maxを900pxに、
+    devを中央に置く
+    背景を白
+    */
+    
+    border: 2px solid #ffffff; 
+    /*わかりやすいように仮で外枠白くしてます*/
+}
