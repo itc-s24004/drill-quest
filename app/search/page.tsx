@@ -119,9 +119,9 @@ export default function SearchPage() {
   }, [keyword, category]);
 
   return (
-    <div className="flex flex-col">
-      {/* 固定ヘッダー: 検索バー + カテゴリー(動かない) */}
-      <div className="sticky top-0 z-10 flex flex-col gap-3 bg-white px-4 pb-3 pt-4">
+    <div className="flex flex-1 flex-col overflow-hidden">
+      {/* ヘッダー: スクロール領域の外にあるので常に固定 */}
+      <div className="flex flex-col gap-3 bg-white px-4 pb-3 pt-4">
         <SearchBar onSearch={(q) => setKeyword(q)} />
         <CategoryFilter
           categories={CATEGORIES}
@@ -130,7 +130,8 @@ export default function SearchPage() {
         />
       </div>
 
-      <div className="px-4 pb-4">
+      {/* 一覧: ここだけがスクロールする */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
         <p className="mb-3 text-sm text-gray-500">
           {filteredQuizzes.length}件見つかりました
         </p>
