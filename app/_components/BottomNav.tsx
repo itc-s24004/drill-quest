@@ -1,9 +1,9 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Bookmark, Search, User, BookOpen, Bell, LucideIcon } from "lucide-react";
+import { Bookmark, Search, BookOpen, Bell, Home, LucideIcon } from "lucide-react";
 
-type NavKey = "bookmark" | "search" | "quizzes" | "profile" | "notify";
+type NavKey = "bookmark" | "search" | "home" | "quizzes" | "notify";
 
 type NavItem = {
   key: NavKey;
@@ -15,7 +15,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/bookmarks" },
   { key: "search", label: "検索", icon: Search, href: "/search" },
-  { key: "profile", label: "プロフィール", icon: User, href: "/profile" },
+  { key: "home", label: "ホーム", icon: Home, href: "/" },
   { key: "quizzes", label: "問題集", icon: BookOpen, href: "/quizzes" },
   { key: "notify", label: "通知", icon: Bell, href: "/notifications" },
 ];
@@ -25,7 +25,9 @@ export default function BottomNav() {
   const router = useRouter();
 
   const activeKey: NavKey =
-    NAV_ITEMS.find((item) => pathname?.startsWith(item.href))?.key ?? "quizzes";
+    NAV_ITEMS.find((item) =>
+      item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href)
+    )?.key ?? "quizzes";
 
   return (
     <nav className="mt-auto w-full px-3 pb-3" aria-label="メインナビゲーション">
