@@ -13,7 +13,7 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/bookmarks" },
+  { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/search?bookmarked_only=true" },
   { key: "search", label: "検索", icon: Search, href: "/search" },
   { key: "home", label: "ホーム", icon: Home, href: "/" },
   { key: "quizzes", label: "問題集", icon: BookOpen, href: "/quizzes" },
