@@ -17,6 +17,11 @@ function getUser({id, email}: getUser_Query): Promise<Prisma.UserModel | undefin
 }
 
 
+function getUserId({ email }: getUser_Query): Promise<Prisma.UserModel["id"] | undefined> {
+    return db.user.findUnique({ where: { email }, select: { id: true }}).then(u => u?.id ?? undefined).catch(e => undefined);
+}
+
+
 
 function hasUser({id, email}: getUser_Query): Promise<boolean> {
     return db.user.findUnique({
@@ -147,6 +152,7 @@ function getUserDetails_Drill_List({ id }: selectUser_Query): Promise<App_DB_Use
 
 export const DB_User = {
     getUser,
+    getUserId,
     hasUser,
     addUser,
     deleteUser,
