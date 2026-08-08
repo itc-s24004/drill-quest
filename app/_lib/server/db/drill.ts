@@ -1,5 +1,6 @@
 import { App_DB_Drill, App_DB_Drill_ } from "@/app/app.type";
 import { db } from "./db";
+import { Prisma } from "../generated/prisma/client";
 
 type getDrillList_Query = {
     userId?: number;
@@ -47,7 +48,7 @@ function getDrills({userId}: getDrillList_Query): Promise<App_DB_Drill[] | undef
 
 
 
-type getDrill_Query = {
+export type getDrill_Query = {
     requestUserEmail?: string | undefined
     
     ownerId?: number | undefined;
@@ -55,7 +56,7 @@ type getDrill_Query = {
     categoryId?: number | undefined;
     tagIds?: number[] | undefined;
 
-    bookMarked__only?: boolean | undefined;
+    bookmarked__only?: boolean | undefined;
     published__only?: boolean | undefined;
 
     after__drillId?: number | undefined;
@@ -90,7 +91,7 @@ export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | und
                 )) ?? []),
 
 
-                query.bookMarked__only ? (
+                query.bookmarked__only ? (
                     {
                         bookmark: {
                             some: {
@@ -121,7 +122,7 @@ export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | und
 
                 {
                     id: {
-                        lt: query.after__drillId
+                        gt: query.after__drillId
                     }
                 }
             ]
@@ -160,7 +161,7 @@ export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | und
 
 
         orderBy: {
-            publishedAt: "asc"
+            publishedAt: Prisma.SortOrder.desc
         },
 
         take: query.max,
