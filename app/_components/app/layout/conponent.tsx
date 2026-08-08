@@ -9,7 +9,7 @@ type AppLayoutProps = {
 
 export function AppLayout({header, children, footer, onScrollEnd}: AppLayoutProps) {
     return (
-        <div className="h-full overflow-y-auto px-4"
+        <div className="flex flex-col h-full overflow-y-auto px-4"
             onScroll={(ev) => {
                 const {clientHeight, scrollTop, scrollHeight} = ev.currentTarget;
                 if (clientHeight + scrollTop >= scrollHeight) onScrollEnd?.();
@@ -19,6 +19,7 @@ export function AppLayout({header, children, footer, onScrollEnd}: AppLayoutProp
                 {header}
             </div>
             {children}
+            <div className="flex-1" />
             <div className="sticky bottom-0">
                 {footer}
             </div>
