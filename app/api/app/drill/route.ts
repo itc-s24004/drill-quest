@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { app_api_map, app_api_response, app_api_response_get } from "../app.api.type";
 import { App_DB_Drill_ } from "@/app/app.type";
-import { db } from "@/app/_lib/server/db/db";
 import { getServerSession } from "next-auth";
 import { DB_Util } from "@/app/_lib/server/db/util";
+import { getDrill_Query } from "@/app/_lib/server/db/drill";
 
 
 
@@ -23,12 +23,7 @@ export type app_api_drill = app_api_map<{
         res: app_api_response<App_DB_Drill_[]>;
     };
     searchDrills: {
-        req: {
-            title?: string;
-            categoryId?: number;
-            start?: number;
-            tags?: number[];
-        };
+        req: getDrill_Query;
         res: app_api_response<App_DB_Drill_[]>;
     };
 }>
@@ -40,45 +35,41 @@ export type app_api_drill = app_api_map<{
 export async function GET(req: NextRequest) {
     const session = await getServerSession();
 
+
+    const SP = req.nextUrl.searchParams;
+    const title = SP.get("title") ?? undefined;
+    const _categoryId = SP.get("categoryId");
+    const tagIds = SP.getAll("tagIds").map(Number);
+    const _before__drillId = SP.get("before__drillId");
+    const _after__drillId = SP.get("after__drillId");
+
+    const bookmarked__only = SP.has("bookmarked_only");
+
+
+    const categoryId = _categoryId ? Number(_categoryId) : undefined;
+    const after__drillId = _after__drillId ? Number(_after__drillId) : undefined;
+    const before__drillId = _before__drillId ? Number(_before__drillId) : undefined;
+
+
+
+    const data = await DB_Util.Drill.getDrills_({
+        requestUserEmail: session?.user?.email ?? undefined,
+        title,
+        categoryId,
+        tagIds,
+        bookmarked__only,
+        before__drillId,
+        published__only: true,
+        max: 5
+    })
     
-    const data = await db.drill.findMany({
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            drillTag: {
-                select: {
-                    id: true,
-                    tag: {
-                        select: {
-                            id: true,
-                            name: true
-                        }
-                    }
-                }
-            },
-            bookmark: {
-                where: {
-                    user: {
-                        email: session?.user?.email ?? undefined
-                    }
-                }
-            },
-            _count: {
-                select: {
-                    bookmark: true
-                }
-            }
-        }
-    });
-
-
-
-    console.log(data)
     
-    const res: app_api_response_get<app_api_drill, "getDrills"> = {
+    const res: app_api_response_get<app_api_drill, "getDrills"> =  data ? {
         success: true,
         data
+    } : {
+        success: false,
+        error: ""
     }
     
     return NextResponse.json(res)

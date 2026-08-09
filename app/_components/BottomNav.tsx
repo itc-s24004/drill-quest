@@ -1,7 +1,8 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Bookmark, Search, BookOpen, Bell, Home, LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 type NavKey = "bookmark" | "search" | "home" | "quizzes" | "notify";
 
@@ -13,7 +14,7 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/search?bookmarked_only=true" },
+  { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/search?bookmarked_only" },
   { key: "search", label: "検索", icon: Search, href: "/search" },
   { key: "home", label: "ホーム", icon: Home, href: "/" },
   { key: "quizzes", label: "問題集", icon: BookOpen, href: "/quizzes" },
@@ -22,7 +23,6 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const router = useRouter();
 
   const activeKey: NavKey =
     NAV_ITEMS.find((item) =>
@@ -30,19 +30,14 @@ export default function BottomNav() {
     )?.key ?? "quizzes";
 
   return (
-    <nav className="mt-auto w-full px-3 pb-3" aria-label="メインナビゲーション">
+    <nav className="mt-auto w-full pb-3" aria-label="メインナビゲーション">
       <div className="rounded-2xl border border-gray-300 bg-gray-50 px-2 py-2">
         <ul className="flex items-stretch justify-between">
           {NAV_ITEMS.map(({ key, label, icon: Icon, href }) => {
             const isActive = activeKey === key;
             return (
               <li key={key} className="flex-1">
-                <button
-                  type="button"
-                  onClick={() => router.push(href)}
-                  aria-current={isActive ? "page" : undefined}
-                  className="group flex w-full flex-col items-center gap-0.5 py-1"
-                >
+                <Link href={href} className="group flex w-full flex-col items-center gap-0.5 py-1">
                   <span
                     className="flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200"
                     style={{
@@ -67,7 +62,7 @@ export default function BottomNav() {
                   >
                     {label}
                   </span>
-                </button>
+                </Link>
               </li>
             );
           })}
