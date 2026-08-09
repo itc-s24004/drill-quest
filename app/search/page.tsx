@@ -1,8 +1,8 @@
 import { App_DB_Category, App_DB_Drill_ } from "../app.type";
 import { db } from "../_lib/server/db/db";
 import { getServerSession } from "next-auth";
-import { PageClient } from "./page.client";
 import { DB_Util } from "../_lib/server/db/util";
+import { DrillView } from "../_components/app/drillView/component";
 
 
 
@@ -24,7 +24,7 @@ export default async function SearchPage({ searchParams }: {searchParams: Promis
     const title = _title && !Array.isArray(_title) ? _title : undefined;
     const categoryId = _categoryId && !Array.isArray(_categoryId) ? Number(_categoryId) : undefined;
     const tagIds = _tagIds ? Array.isArray(_tagIds) ? _tagIds.map(Number) : [Number(_tagIds)] : undefined;
-    const bookMarked__only = _bookmarked_only !== undefined;
+    const bookmarked__only = _bookmarked_only !== undefined;
 
 
 
@@ -34,7 +34,9 @@ export default async function SearchPage({ searchParams }: {searchParams: Promis
             title,
             categoryId,
             tagIds,
-            bookMarked__only
+            bookmarked__only,
+            published__only: true,
+            max: 10
         }),
 
         db.category.findMany({
@@ -48,6 +50,7 @@ export default async function SearchPage({ searchParams }: {searchParams: Promis
   
 
     return (
-        <PageClient data={data ?? []} categories={categories} />
+        <DrillView data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
+        // <PageClient data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
     )
 }
