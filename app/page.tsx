@@ -1,32 +1,18 @@
-import SearchHeader from "./_components/SearchHeader";
-import QuizCard from "./_components/QuizCard";
-import { ClientSide } from "./_components/app/client/component";
 import { db } from "./_lib/server/db/db";
+import { DB_Util } from "./_lib/server/db/util";
+import { App_DB_Drill_ } from "./app.type";
 import { ClientScreen } from "./page.client";
-import { App_DB_Drill } from "./app.type";
+import { getSession } from "next-auth/react";
 
 
 export default async function HomePage() {
-    const drills: App_DB_Drill[] = await db.drill.findMany({
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            drillTag: {
-                select: {
-                    id: true,
-                    tag: {
-                        select: {
-                            id: true,
-                            name: true,
-                        }
-                    }
-                }
-            }
-        }
-    })
+    const session = await getSession();
     
-
+    
+    const drills: App_DB_Drill_[] = await DB_Util.Drill.getDrills_({
+        requestUserEmail: session?.user?.email ?? undefined
+    }) ?? []
+    
     return (
         <ClientScreen data={drills}/>
     );

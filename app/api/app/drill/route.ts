@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { app_api_map, app_api_response, app_api_response_get } from "../app.api.type";
-import { App_DB_Drill } from "@/app/app.type";
+import { App_DB_Drill_ } from "@/app/app.type";
 import { db } from "@/app/_lib/server/db/db";
-
-export type app_api_params_get_drill = {
-    id: number;
-}
-
-export type app_api_response_get_drill = app_api_response<App_DB_Drill[]>
+import { getServerSession } from "next-auth";
+import { DB_Util } from "@/app/_lib/server/db/util";
 
 
 
@@ -16,7 +12,7 @@ export type app_api_drill = app_api_map<{
         req: {
             id: number;
         };
-        res: app_api_response<App_DB_Drill>
+        res: app_api_response<App_DB_Drill_>;
     };
     getDrills: {
         req: {
@@ -24,15 +20,26 @@ export type app_api_drill = app_api_map<{
             max?: number;
             start?: Date | undefined;
         };
-        res: app_api_response<App_DB_Drill[]>
+        res: app_api_response<App_DB_Drill_[]>;
+    };
+    searchDrills: {
+        req: {
+            title?: string;
+            categoryId?: number;
+            start?: number;
+            tags?: number[];
+        };
+        res: app_api_response<App_DB_Drill_[]>;
     };
 }>
 
 
 
+
+
 export async function GET(req: NextRequest) {
-    
-    
+    const session = await getServerSession();
+
     
     const data = await db.drill.findMany({
         select: {
@@ -48,6 +55,18 @@ export async function GET(req: NextRequest) {
                             name: true
                         }
                     }
+                }
+            },
+            bookmark: {
+                where: {
+                    user: {
+                        email: session?.user?.email ?? undefined
+                    }
+                }
+            },
+            _count: {
+                select: {
+                    bookmark: true
                 }
             }
         }

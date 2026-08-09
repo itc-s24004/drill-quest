@@ -1,9 +1,11 @@
 "use client";
 
+import { App_DB_Category } from "@/app/app.type";
+
 type CategoryFilterProps = {
-  categories: string[];
-  active: string;
-  onChange: (category: string) => void;
+  categories: App_DB_Category[];
+  active: number | undefined;
+  onChange: (categoryId: number) => void;
 };
 
 export default function CategoryFilter({
@@ -13,18 +15,18 @@ export default function CategoryFilter({
 }: CategoryFilterProps) {
   return (
     <div className="flex flex-wrap gap-2">
-      {categories.map((cat) => {
-        const isActive = cat === active;
+      {categories.map((cat, i) => {
+        const isActive = cat.id === active;
         return (
           <button
-            key={cat}
+            key={i}
             type="button"
-            onClick={() => onChange(cat)}
+            onClick={() => onChange(cat.id)}
             className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
               isActive ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-700"
             }`}
           >
-            {cat}
+            {cat.name}
           </button>
         );
       })}
