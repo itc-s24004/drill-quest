@@ -31,10 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <div className={styles.contentRoot}>
-          <div className="flex flex-1 flex-col overflow-hidden min-h-0">
-            {children}
-          </div>
-          <BottomNav />
+          {children}
         </div>
       </body>
     </html>
