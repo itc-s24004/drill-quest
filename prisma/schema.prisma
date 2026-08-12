@@ -25,10 +25,13 @@ model User {
   bookmark     Bookmark[]
   groupUser    GroupUser[]
   invitations  Invitation[]
-  setting      Setting?
+  results      Result[]
+  isNotificationEnabled Boolean @default(true) @map("is_notification_enabled")
 
   @@map("users")
 }
+
+
 
 model Category {
   id      Int     @id @default(autoincrement())
@@ -38,6 +41,8 @@ model Category {
 
   @@map("categories")
 }
+
+
 
 model Drill {
   id          Int       @id @default(autoincrement())
@@ -56,21 +61,28 @@ model Drill {
   drillTag   DrillTag[]
   bookmark   Bookmark[]
   share      Share[]
+  results    Result[]
 
   @@map("drills")
 }
 
-model Question {
-  id        Int            @id @default(autoincrement())
-  drillId   Int            @map("drill_id")
-  sortIndex Int            @map("sort_index")
-  body      String
 
-  drill   Drill            @relation(fields: [drillId], references: [id], onDelete: Cascade)
-  choices QuestionChoice[]
+
+model Question {
+  id              Int            @id @default(autoincrement())
+  drillId         Int            @map("drill_id")
+  sortIndex       Int            @map("sort_index")
+  body            String
+
+  drill           Drill            @relation(fields: [drillId], references: [id], onDelete: Cascade)
+  
+  choices         QuestionChoice[]
+  resultQuestions ResultQuestion[]
 
   @@map("questions")
 }
+
+
 
 model QuestionChoice {
   id         Int     @id @default(autoincrement())
@@ -80,9 +92,11 @@ model QuestionChoice {
   isCorrect  Boolean @default(false) @map("is_correct")
 
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
+  
   @@map("question_choices")
 }
+
+
 
 model Tag {
   id      Int       @id @default(autoincrement())
@@ -91,6 +105,8 @@ model Tag {
 
   @@map("tags")
 }
+
+
 
 model DrillTag {
   id      Int @id @default(autoincrement())
@@ -105,6 +121,8 @@ model DrillTag {
   @@unique([drillId, tagId])
 }
 
+
+
 model Bookmark {
   id        Int      @id @default(autoincrement())
   userId    Int      @map("user_id")
@@ -118,6 +136,8 @@ model Bookmark {
 
   @@unique([userId, drillId])
 }
+
+
 
 model Group {
   id         Int         @id @default(autoincrement())
@@ -135,6 +155,8 @@ model Group {
   @@map("groups")
 }
 
+
+
 model GroupUser {
   id      Int @id @default(autoincrement())
   groupId Int @map("group_id")
@@ -147,6 +169,8 @@ model GroupUser {
 
   @@unique([groupId, userId])
 }
+
+
 
 model Invitation {
   id        Int      @id @default(autoincrement())
@@ -163,6 +187,8 @@ model Invitation {
   @@unique([groupId, userId])
 }
 
+
+
 model Share {
   id        Int      @id @default(autoincrement())
   drillId   Int      @map("drill_id")
@@ -177,12 +203,42 @@ model Share {
   @@unique([drillId, groupId])
 }
 
-model Setting {
-  id                    Int     @id @default(autoincrement())
-  userId                Int     @unique @map("user_id")
-  isNotificationEnabled Boolean @default(true) @map("is_notification_enabled")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("settings")
+model Result {
+  id              Int               @id @default(autoincrement())
+  createdAt       DateTime          @default(now()) @map("created_at")
+
+
+  userId          Int               @map("user_id")
+  drillId         Int               @map("drill_id")
+  
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drill           Drill             @relation(fields: [drillId], references: [id], onDelete: Cascade)
+
+  resultQuestions  ResultQuestion[]
+  
+  @@map("results")
 }
+
+
+
+model ResultQuestion {
+  id        Int       @id @default(autoincrement())
+  isCorrect Boolean
+  
+  resultId  Int       @map("result_id")
+  questionId  Int       @map("question_id")
+
+  result    Result    @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  question  Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+
+  @@unique([resultId, questionId])
+
+
+  @@map("result_questions")
+}
+
+
+
