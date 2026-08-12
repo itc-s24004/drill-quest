@@ -130,5 +130,6 @@ export async function api_client_req2<api_map extends app_api_map2, type extends
 
 export const App_API_Client = {
     drill: App_API_Drill,
-    bookmark: App_API_Bookmark
+    bookmark: App_API_Bookmark,
+    answer: App_API_Answer
 }
