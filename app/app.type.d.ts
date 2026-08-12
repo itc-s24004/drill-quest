@@ -50,8 +50,6 @@ export type App_DB_User_Details_Drill_List = Prisma.UserGetPayload<{
         email;
         createdAt;
 
-        setting;
-
         drills: {
             select: {
                 id;
@@ -161,6 +159,52 @@ type App_DB_Drill_ = Prisma.DrillGetPayload<{
         }
     }
 }>
+
+
+
+type App_DB_Drill_Answer_Detail = Prisma.DrillGetPayload<{
+    select: {
+        id: true;
+        title: true;
+        description: true;
+        drillTag: {
+            select: {
+                id: true;
+                tag: {
+                    select: {
+                        id: true;
+                        name: true;
+                    }
+                }
+            }
+        };
+        questions: {
+            select: {
+                id: true;
+                body: true;
+                sortIndex: true;
+                choices: {
+                    select: {
+                        id: true;
+                        body: true;
+                    }
+                }
+            }
+        };
+        bookmark: {
+            where: {
+                user: {
+                    id: true;
+                }
+            };
+            select: {
+                id: true;
+            }
+        }
+    }
+}>;
+
+
 
 
 type App_DB_Drill_Detail = Prisma.DrillGetPayload<{
