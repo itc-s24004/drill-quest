@@ -13,12 +13,12 @@ type getUser_Query = {
  * @returns 
  */
 function getUser({id, email}: getUser_Query): Promise<Prisma.UserModel | undefined> {
-    return db.user.findUnique({where: {id, email}}).then(d => d ?? undefined).catch(e => undefined);
+    return db.user.findUnique({where: {id, email}}).then(d => d ?? undefined).catch(() => undefined);
 }
 
 
 function getUserId({ email }: getUser_Query): Promise<Prisma.UserModel["id"] | undefined> {
-    return db.user.findUnique({ where: { email }, select: { id: true }}).then(u => u?.id ?? undefined).catch(e => undefined);
+    return db.user.findUnique({ where: { email }, select: { id: true }}).then(u => u?.id ?? undefined).catch(() => undefined);
 }
 
 
@@ -32,7 +32,7 @@ function hasUser({id, email}: getUser_Query): Promise<boolean> {
         select:{
             id: true
         }
-    }).then(d => d ? true : false).catch(e => false);
+    }).then(d => d ? true : false).catch(() => false);
 }
 
 
@@ -58,7 +58,7 @@ function addUser({email, name}: addUser_Query): Promise<boolean> {
         select: {
             id: true
         }
-    }).then(d => d ? true : false).catch(e => false)
+    }).then(d => d ? true : false).catch(() => false)
 }
 
 
@@ -72,7 +72,7 @@ function deleteUser({id}: deleteUser_Query): Promise<boolean> {
         where: {
             id
         }
-    }).then(d => true).catch(e => false)
+    }).then(() => true).catch(() => false)
 }
 
 
@@ -131,7 +131,7 @@ function getUserDetails_Drill_List({ id }: selectUser_Query): Promise<App_DB_Use
                 }
             }
         }
-    }).then(d => d ?? undefined).catch(e => undefined)
+    }).then(d => d ?? undefined).catch(() => undefined)
 }
 
 
