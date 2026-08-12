@@ -99,7 +99,6 @@ function getUserDetails_Drill_List({ id }: selectUser_Query): Promise<App_DB_Use
             email: true,
             createdAt: true,
 
-            setting: true,
 
             drills: {
                 select: {
