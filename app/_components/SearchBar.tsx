@@ -1,28 +1,26 @@
 "use client";
 
-import { useState, FormEvent } from "react";
 
 type SearchBarProps = {
-  onSearch?: (query: string) => void;
+  keywork: string;
+  onChangeKeywork(keywork: string): void;
+  onSubmit(): void;
 };
 
-export default function SearchBar({ onSearch }: SearchBarProps) {
-  const [query, setQuery] = useState("");
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSearch?.(query.trim());
-  };
+export default function SearchBar({ keywork, onSubmit, onChangeKeywork }: SearchBarProps) {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       className="flex items-center gap-2 rounded-full bg-gray-200 px-4 py-2"
     >
       <input
         type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={keywork}
+        onChange={(ev) => {
+          ev.preventDefault()
+          onChangeKeywork(ev.target.value)
+        }}
         placeholder="検索ワードを入力"
         className="flex-1 bg-transparent text-sm text-gray-800 placeholder:text-gray-500 outline-none"
       />
