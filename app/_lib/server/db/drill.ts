@@ -42,7 +42,7 @@ function getDrills({userId}: getDrillList_Query): Promise<App_DB_Drill[] | undef
                 }
             }
         }
-    })
+    }).catch(() => undefined)
 }
 
 
@@ -165,7 +165,7 @@ export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | und
         },
 
         take: query.max,
-    })
+    }).catch(() => undefined);
 }
 
 
