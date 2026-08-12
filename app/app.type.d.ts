@@ -1,5 +1,16 @@
 import { Prisma } from "./_lib/server/generated/prisma/client";
 
+
+
+
+export type App_ChildrenProp = {
+    children?: React.ReactNode;
+}
+
+
+
+
+
 export type App_DB_User = Prisma.UserGetPayload<{
     select: {
         id;
@@ -98,36 +109,6 @@ export type App_DB_Drill = Prisma.DrillGetPayload<{
             }
         }
     }
-}>
-
-
-type a = Prisma.DrillGetPayload<{
-    select: {
-        id;
-        title;
-        description;
-        drillTag: {
-            select: {
-                id;
-                tag: {
-                    select: {
-                        id;
-                        name;
-                    }
-                }
-            }
-        };
-        _count: {
-            select: {
-                bookmark: true;
-            }
-        };
-        bookmark: {
-            where: {
-                userId;
-            };
-        }
-    };
 }>
 
 
@@ -233,9 +214,32 @@ type App_DB_Bookmark = Prisma.BookmarkGetPayload<{
 }>
 
 
-// type a = Prisma.GroupModel[""]
 
 
-
-
-// export type App_DB_User_
+type App_DB_Result_Detail = Prisma.ResultGetPayload<{
+    select: {
+        createdAt: true,
+        drill: {
+            select: {
+                title: true,
+                description: true,
+                questions: {
+                    select: {
+                        body: true,
+                        choices: {
+                            select: {
+                                body: true,
+                                isCorrect: true
+                            }
+                        },
+                        resultQuestions: {
+                            select: {
+                                isCorrect: true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}>
