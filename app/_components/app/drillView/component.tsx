@@ -4,7 +4,7 @@
 import { app_api_request_get } from "@/app/api/app/app.api.type";
 import { app_api_drill } from "@/app/api/app/drill/route";
 import { App_DB_Category, App_DB_Drill_ } from "@/app/app.type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BottomNav from "../../BottomNav";
 import QuizCard from "../../QuizCard";
 import { ClientSide } from "../client/component";
@@ -12,6 +12,7 @@ import { Header } from "../header/component";
 import { AppLayout } from "../layout/conponent";
 import { Loader2 } from "lucide-react";
 import { App_API_Client } from "@/app/api/app/client";
+import { StateUpdateListener } from "@/app/_lib/client/update/state";
 
 type DrillViewProps = {
     data: App_DB_Drill_[];
@@ -21,24 +22,20 @@ type DrillViewProps = {
 
 
 
-export function DrillView({data, categories, query}: DrillViewProps) {
-    const [oldData, setOldData] = useState(data);
+export function DrillView({data, categories, query={}}: DrillViewProps) {
+    const [update, setUpdate] = useState(0);
     const [drills, setDrills] = useState<App_DB_Drill_[]>(data);
-    
-    
-    const [keyword, setKeyword] = useState("");
-    const [category, setCategory] = useState<number>();
 
     const [contentEnd, setContentEnd] = useState(false);
     const [apiLoading, setApiLoading] = useState(false);
 
 
-
-    if (oldData !== data) {
+    StateUpdateListener({value: data, onUpdate() {
         setDrills(data);
-        setOldData(data);
-        setContentEnd(false)
-    }
+        setContentEnd(false);
+        setApiLoading(false);
+        setUpdate(c => c+1);
+    }});
 
 
     async function getMore() {
@@ -48,9 +45,14 @@ export function DrillView({data, categories, query}: DrillViewProps) {
         const res = await App_API_Client.drill.searchDrills({...query, before__drillId: lastDrill?.id})
         setApiLoading(false);
         if (res?.success) {
-            setContentEnd(res.data.length === 0);
-            setDrills((currentDrills) => {
-                return [...currentDrills, ...res.data]
+            setUpdate(c => {
+                if (c !== update) return c;
+                setContentEnd(res.data.length === 0);
+                setDrills((currentDrills) => {
+                    return [...currentDrills, ...res.data]
+                })
+                
+                return c + 1;
             })
         }
     }
@@ -69,10 +71,10 @@ export function DrillView({data, categories, query}: DrillViewProps) {
                 onScrollEnd={getMore}
             >
                 {
-                    drills.map((quiz) => (
+                    drills.map((quiz, i) => (
                         <QuizCard
                             data={quiz}
-                            key={quiz.id}
+                            key={i}
                             onUpdate={(newData) => {
                                 setDrills((currentDrills) => {
                                     const newDrills = [...currentDrills];
