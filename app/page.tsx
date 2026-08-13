@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { DrillView } from "./_components/app/drillView/component";
+import { DrillListView } from "./_components/app/drillListView/component";
 import { DB_Util } from "./_lib/server/db/util";
 import { App_DB_Drill_ } from "./app.type";
 
@@ -14,6 +14,6 @@ export default async function HomePage() {
     }) ?? [];
     
     return (
-        <DrillView data={drills} />
+        <DrillListView data={drills} />
     );
 }
