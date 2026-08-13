@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Bookmark, Loader, LoaderCircle, Star } from "lucide-react";
+import { Bookmark, LoaderCircle } from "lucide-react";
 import { App_DB_Bookmark, App_DB_Drill_ } from "../app.type";
 import { App_API_Client } from "../api/app/client";
+import Link from "next/link";
 
 export type QuizCardProps = {
   data: App_DB_Drill_;
@@ -25,13 +26,13 @@ export default function QuizCard({
   //   setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
   // };
 
-  const [ApiRequesting_Star, setApiRequesting_Star] = useState(false);
-  const toggleStar = async () => {
-    if (ApiRequesting_Star) return;
+  const [ApiRequesting_Bookmark, setApiRequesting_Bookmark] = useState(false);
+  const toggleBookmark = async () => {
+    if (ApiRequesting_Bookmark) return;
     if (isBookmarked) {
-      setApiRequesting_Star(true);
+      setApiRequesting_Bookmark(true);
       const res = await App_API_Client.bookmark.removeBookmark(bookmark.id);
-      setApiRequesting_Star(false);
+      setApiRequesting_Bookmark(false);
       
       if (res?.success) onUpdate({
         ...data,
@@ -42,9 +43,9 @@ export default function QuizCard({
       })
 
     } else {
-      setApiRequesting_Star(true);
+      setApiRequesting_Bookmark(true);
       const res = await App_API_Client.bookmark.addBookmark(data.id);
-      setApiRequesting_Star(false);
+      setApiRequesting_Bookmark(false);
       
       if (res?.success) onUpdate({
         ...data,
@@ -61,7 +62,11 @@ export default function QuizCard({
     <div className="rounded-md bg-gray-200 px-4 py-3 m-1">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-gray-900">{data.title}</p>
+          <Link href={`/drill/${data.id}`}>
+            <h3 className="text-sm font-bold text-gray-900">
+              {data.title}
+            </h3>
+          </Link>
           <div className="mt-0.5 flex items-baseline gap-2">
             <p
               className={`text-xs text-gray-600 ${
@@ -99,13 +104,13 @@ export default function QuizCard({
           </button> */}
           <button
             type="button"
-            onClick={toggleStar}
+            onClick={toggleBookmark}
             aria-pressed={isBookmarked}
             aria-label="ブックマーク"
             className="flex items-center gap-1 text-sm font-bold text-gray-800 transition-transform active:scale-90 cursor-pointer"
           >
             {
-              ApiRequesting_Star ? 
+              ApiRequesting_Bookmark ? 
               <LoaderCircle
                 size={24}
                 className="animate-spin"

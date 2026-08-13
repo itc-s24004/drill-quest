@@ -2,7 +2,7 @@ import { App_DB_Category, App_DB_Drill_ } from "../app.type";
 import { db } from "../_lib/server/db/db";
 import { getServerSession } from "next-auth";
 import { DB_Util } from "../_lib/server/db/util";
-import { DrillView } from "../_components/app/drillView/component";
+import { DrillListView } from "../_components/app/drillListView/component";
 
 
 
@@ -50,7 +50,7 @@ export default async function SearchPage({ searchParams }: {searchParams: Promis
   
 
     return (
-        <DrillView data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
+        <DrillListView data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
         // <PageClient data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
     )
 }
