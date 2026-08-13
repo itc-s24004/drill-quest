@@ -6,6 +6,7 @@ import { App_API_Drill } from "./drill/client";
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { App_API_Bookmark } from "./bookmark/client";
 import { App_API_Answer } from "./answer/client";
+import { App_API_Tag } from "./tag/client";
 
 
 export async function api_get<api_map extends app_api_map, type extends keyof api_map, raw_response extends api_map[type]["res"] = api_map[type]["res"], response = app_api_response<raw_response> | undefined >(path: string, searchparams: api_map[type]["req"]): Promise<response> {
@@ -131,5 +132,6 @@ export async function api_client_req2<api_map extends app_api_map2, type extends
 export const App_API_Client = {
     drill: App_API_Drill,
     bookmark: App_API_Bookmark,
-    answer: App_API_Answer
+    answer: App_API_Answer,
+    tag: App_API_Tag
 }

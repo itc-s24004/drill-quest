@@ -293,3 +293,13 @@ type App_DB_Result_Detail = Prisma.ResultGetPayload<{
         }
     }
 }>
+
+
+
+
+type App_DB_Tag = Prisma.TagGetPayload<{
+    select: {
+        id: true;
+        name: true;
+    }
+}>

@@ -3,7 +3,7 @@
 
 import { app_api_request_get } from "@/app/api/app/app.api.type";
 import { app_api_drill } from "@/app/api/app/drill/route";
-import { App_DB_Category, App_DB_Drill_ } from "@/app/app.type";
+import { App_DB_Category, App_DB_Drill_, App_DB_Tag } from "@/app/app.type";
 import { useState } from "react";
 import BottomNav from "../../BottomNav";
 import QuizCard from "../../QuizCard";
@@ -13,16 +13,18 @@ import { AppLayout } from "../layout/conponent";
 import { Loader2 } from "lucide-react";
 import { App_API_Client } from "@/app/api/app/client";
 import { StateUpdateListener } from "@/app/_lib/client/update/state";
+import { useRouter } from "next/navigation";
 
 type DrillViewProps = {
     data: App_DB_Drill_[];
     categories?: App_DB_Category[] | undefined;
     query?: app_api_request_get<app_api_drill, "searchDrills"> | undefined;
+    tags?: App_DB_Tag[]
 }
 
 
 
-export function DrillListView({data, categories, query={}}: DrillViewProps) {
+export function DrillListView({data, categories, tags=[], query={}}: DrillViewProps) {
     const [update, setUpdate] = useState(0);
     const [drills, setDrills] = useState<App_DB_Drill_[]>(data);
 
@@ -57,13 +59,23 @@ export function DrillListView({data, categories, query={}}: DrillViewProps) {
         }
     }
     
+    const router = useRouter();
     
     
     return (
         <ClientSide>
             <AppLayout
                 header={
-                    <Header categories={categories} query={query}/>
+                    <Header categories={categories} query={query} tags={tags}
+                        onUpdateQuery={(query) => {
+                            const url = new URL("/search", window.location.origin);
+                            Object.entries(query).forEach(([key, value]) => {
+                                url.searchParams.set(key, String(value))
+                            })
+                            router.push(url.toString());
+                            router.refresh()
+                        }}
+                    />
                 }
                 footer={
                     <BottomNav />

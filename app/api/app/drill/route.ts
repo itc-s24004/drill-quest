@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         bookmarked__only,
         before__drillId,
         published__only: true,
-        max: 5
+        max: 30
     })
     
     
