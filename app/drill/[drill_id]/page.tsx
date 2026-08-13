@@ -2,7 +2,7 @@ import { db } from "@/app/_lib/server/db/db";
 import { App_DB_Drill_Answer_Detail, App_DB_Drill_Detail } from "@/app/app.type";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
-import PageClient from "./page.client";
+import { PageClient } from "../page.client";
 // import { PageClient } from "./_page.client";
 
 type PageProps = {

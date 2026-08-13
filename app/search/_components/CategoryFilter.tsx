@@ -22,7 +22,7 @@ export default function CategoryFilter({
             key={i}
             type="button"
             onClick={() => onChange(cat.id)}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer ${
               isActive ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-700"
             }`}
           >

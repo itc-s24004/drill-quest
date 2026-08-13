@@ -19,7 +19,7 @@ type PageClientProps = {
   data: App_DB_Drill_Answer_Detail;
 }
 
-export default function PageClient({ data }: PageClientProps) {
+export function PageClient({ data }: PageClientProps) {
     const router = useRouter()
     
     const [update, setUpdate] = useState(0);
