@@ -49,7 +49,7 @@ export default async function SearchPage({ searchParams }: {searchParams: Promis
 
   
 
-    return (
+  return (
         <DrillListView data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
         // <PageClient data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
     )
