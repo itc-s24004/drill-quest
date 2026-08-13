@@ -200,6 +200,11 @@ type App_DB_Drill_Answer_Detail = Prisma.DrillGetPayload<{
             select: {
                 id: true;
             }
+        };
+        _count: {
+            select: {
+                bookmark: true;
+            }
         }
     }
 }>;
