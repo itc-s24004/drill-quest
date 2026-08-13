@@ -54,7 +54,7 @@ export default function QuizzesPage() {
             <h1 className="text-lg font-bold text-gray-900">マイ問題集</h1>
             <button
               type="button"
-              onClick={() => router.push("/quizzes/create")}
+              onClick={() => router.push("/mydrill/create")}
               className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:scale-95"
             >
               <Plus size={16} strokeWidth={2.5} />
