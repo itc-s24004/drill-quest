@@ -270,6 +270,7 @@ type App_DB_Result_Detail = Prisma.ResultGetPayload<{
         createdAt: true,
         drill: {
             select: {
+                id: true;
                 title: true,
                 description: true,
                 questions: {
