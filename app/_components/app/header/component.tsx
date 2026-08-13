@@ -94,7 +94,7 @@ export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderPr
                             setCurrentQuery({...currentQuery, title: keyword})
                         }}
                         onSubmit={() => {
-                            onUpdateQuery?.({...currentQuery, tagIds: tags.map(tag => tag.id)});
+                            onUpdateQuery?.({...currentQuery, categoryId: category, tagIds: tags.map(tag => tag.id)});
                         }}
                         onClickTag={(tag) => {
                             setTags(current => current.filter(t => t.id !== tag.id))
@@ -148,7 +148,9 @@ export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderPr
                 <CategoryFilter
                     categories={categories}
                     active={category}
-                    onChange={setCategory}
+                    onChange={(id) => {
+                        setCategory(category === id ? undefined : id);
+                    }}
                 />
             }
         </div>
