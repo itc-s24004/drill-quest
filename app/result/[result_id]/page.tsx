@@ -23,6 +23,7 @@ export default async function Page({params}: PageProps) {
             createdAt: true,
             drill: {
                 select: {
+                    id: true,
                     title: true,
                     description: true,
                     questions: {
