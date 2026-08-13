@@ -17,7 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/search?bookmarked_only" },
   { key: "search", label: "検索", icon: Search, href: "/search" },
   { key: "home", label: "ホーム", icon: Home, href: "/" },
-  { key: "quizzes", label: "問題集", icon: BookOpen, href: "/quizzes" },
+  { key: "quizzes", label: "問題集", icon: BookOpen, href: "/mydrill" },
   { key: "notify", label: "通知", icon: Bell, href: "/notifications" },
 ];
 
