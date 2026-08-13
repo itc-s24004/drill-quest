@@ -2,7 +2,7 @@ import { db } from "@/app/_lib/server/db/db";
 import { API_ERROR } from "@/app/api/app/server";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
-import PageClient from "../../[drill_id]/page.client";
+import { PageClient } from "../../page.client";
 
 
 type PageProps = {
@@ -20,7 +20,7 @@ export default async function Page({ params }: PageProps) {
 
     const email = session?.user?.email;
 
-    if (!email) return API_ERROR.Unauthorized;
+    if (!email) return notFound();
 
 
     const share_id = Number.parseInt(_share_id);
