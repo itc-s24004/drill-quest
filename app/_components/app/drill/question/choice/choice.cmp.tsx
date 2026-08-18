@@ -16,17 +16,17 @@ export function App_Choice({body, selected, onClick}: App_ChoiceProps) {
             onClick={onClick}
             className={
                 "flex items-center gap-3 rounded-xl border px-[14px] py-3 text-left transition-colors cursor-pointer "
-                + (selected ? "border-[#2F6F5E] bg-[#E7F2EE]" : "border-[#DADCE0] bg-white")
+                + (selected ? "border-[#60A5FA]" : "border-[#DADCE0]")
             }
         >
             <Circle
                 size={28}
-                stroke={"#DADCE0"}
+                stroke={"--background-over"}
                 strokeWidth={2}
-                fill={selected ? "#7cb4a5" : "#DADCE0"}
+                fill={selected ? "#60A5FA" : "#DADCE0"}
                 className="shrink-0 transition-outline"
             />
-            <span className="text-[13.5px] font-semibold text-[#202124]">
+            <span className="text-[13.5px] font-semibold text-[--text-color]">
                 {body}
             </span>
         </button>
