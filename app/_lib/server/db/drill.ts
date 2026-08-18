@@ -51,6 +51,7 @@ function getDrills({userId}: getDrillList_Query): Promise<App_DB_Drill[] | undef
 export type getDrill_Query = {
     requestUserEmail?: string | undefined
     
+    ownerEmail?: string | undefined;
     ownerId?: number | undefined;
     title?: string | undefined;
     categoryId?: number | undefined;
@@ -66,11 +67,18 @@ export type getDrill_Query = {
 }
 
 export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | undefined> {
-    return db.drill.findMany({            
+    return db.drill.findMany({     
         where: {
             AND: [
                 {
                     userId: query.ownerId
+                },
+                {
+                    user: {
+                        email: {
+                            equals: query.ownerEmail
+                        }
+                    }
                 },
                 {
                     categoryId: query.categoryId
@@ -96,7 +104,9 @@ export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | und
                         bookmark: {
                             some: {
                                 user: {
-                                    email: query.requestUserEmail
+                                    email: {
+                                        equals: query.requestUserEmail
+                                    }
                                 }
                             }
                         }
@@ -147,6 +157,7 @@ export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | und
             _count: {
                 select: {
                     bookmark: true,
+                    questions: true
                 }
             },
             bookmark: {
@@ -166,6 +177,23 @@ export function getDrills_(query: getDrill_Query): Promise<App_DB_Drill_[] | und
 
         take: query.max,
     }).catch(() => undefined);
+}
+
+
+
+
+
+
+
+
+type getUserDrill_Query = {
+    userEmail: string;
+}
+
+function getUserDrill() {
+    db.drill.findMany({
+
+    })
 }
 
 

@@ -49,7 +49,7 @@ type app_api_req<body> = {
 }
 
 
-type app_api_doc<body> = {
+type app_api_doc = {
     req: {
         params: Record<string,
             string | string[] |
@@ -58,7 +58,7 @@ type app_api_doc<body> = {
             Date | Date[] |
             undefined | undefined[]
         > | undefined;
-        body: body | undefined
+        body: unknown | undefined
     };
     res: app_api_response;
 }

@@ -19,12 +19,18 @@ type DrillViewProps = {
     data: App_DB_Drill_[];
     categories?: App_DB_Category[] | undefined;
     query?: app_api_request_get<app_api_drill, "searchDrills"> | undefined;
-    tags?: App_DB_Tag[]
+    tags?: App_DB_Tag[];
+
+    header?: React.ReactNode;
+    footer?: React.ReactNode;
+    
+    
+    genLink?(drill: App_DB_Drill_): string | undefined;
 }
 
 
 
-export function DrillListView({data, categories, tags=[], query={}}: DrillViewProps) {
+export function DrillListView({data, categories, tags=[], query, header, footer, genLink}: DrillViewProps) {
     const [update, setUpdate] = useState(0);
     const [drills, setDrills] = useState<App_DB_Drill_[]>(data);
 
@@ -66,18 +72,31 @@ export function DrillListView({data, categories, tags=[], query={}}: DrillViewPr
         <ClientSide>
             <AppLayout
                 header={
-                    <Header categories={categories} query={query} tags={tags}
-                        onUpdateQuery={(query) => {
-                            const url = new URL("/search", window.location.origin);
-                            Object.entries(query).forEach(([key, value]) => {
-                                url.searchParams.set(key, String(value))
-                            })
-                            router.push(url.toString());
-                            router.refresh()
-                        }}
-                    />
+                    header ??
+                    (
+                        query &&
+                        <Header categories={categories} query={query} tags={tags}
+                            onUpdateQuery={(query) => {
+                                const url = new URL("/search", window.location.origin);
+                                Object.entries(query).forEach(([key, value]) => {
+                                    if (Array.isArray(value)) {
+                                        value.forEach(value => {
+                                            const v = String(value)
+                                            if (v.length > 0) url.searchParams.append(key, v)
+                                        })
+                                    } else if (value !== undefined) {
+                                        const v = String(value);
+                                        if (v.length > 0) url.searchParams.set(key, String(value))
+                                    }
+                                })
+                                router.push(url.toString());
+                                router.refresh()
+                            }}
+                        />
+                    )
                 }
                 footer={
+                    footer ??
                     <BottomNav />
                 }
                 onScrollEnd={getMore}
@@ -94,25 +113,28 @@ export function DrillListView({data, categories, tags=[], query={}}: DrillViewPr
                                     return newDrills;
                                 })
                             }}
+                            genLink={genLink}
                         />
                     ))
                 }
                 {
-                    contentEnd ?
-                    <p className="my-6 text-center text-sm font-medium text-gray-500">ここが最後です</p> :
-                    <button className="my-4 w-3/4 mx-auto rounded-full py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={apiLoading}
-                        onClick={getMore}
-                    >
-                        {
-                            apiLoading ?
-                            <span className="flex items-center justify-center gap-2">
-                                <Loader2 className="animate-spin"/>
-                                読み込み中...
-                            </span> :
-                            "もっと表示"
-                        }
-                    </button>
+                    query &&(
+                        contentEnd ?
+                        <p className="my-6 text-center text-sm font-medium text-gray-500">ここが最後です</p> :
+                        <button className="my-4 w-3/4 mx-auto rounded-full py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={apiLoading}
+                            onClick={getMore}
+                        >
+                            {
+                                apiLoading ?
+                                <span className="flex items-center justify-center gap-2">
+                                    <Loader2 className="animate-spin"/>
+                                    読み込み中...
+                                </span> :
+                                "もっと表示"
+                            }
+                        </button>
+                    )
                 }
             </AppLayout>
         </ClientSide>

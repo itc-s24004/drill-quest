@@ -1,86 +1,66 @@
 "use client";
 
 import { useState } from "react";
-import { Bookmark, LoaderCircle } from "lucide-react";
 import { App_DB_Bookmark, App_DB_Drill_ } from "../app.type";
-import { App_API_Client } from "../api/app/client";
 import Link from "next/link";
+import { AppTag } from "./app/tag/tag.cmp";
+import { BookMarkButton } from "./app/bookmark/button/bookmark.button.cmp";
 
 export type QuizCardProps = {
   data: App_DB_Drill_;
   onUpdate: (data: App_DB_Drill_) => void;
+  genLink?(data: App_DB_Drill_): string | undefined;
 };
 
 export default function QuizCard({
   data,
-  onUpdate
+  onUpdate,
+  genLink
 }: QuizCardProps) {
   const [expanded, setExpanded] = useState(false);
   // const [isLiked, setIsLiked] = useState(liked);
   // const [likes, setLikes] = useState(likeCount);
   const bookmark: App_DB_Bookmark | undefined = data.bookmark[0];
-  const isBookmarked = bookmark !== undefined;
 
   // const toggleLike = () => {
   //   setIsLiked((prev) => !prev);
   //   setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
   // };
 
-  const [ApiRequesting_Bookmark, setApiRequesting_Bookmark] = useState(false);
-  const toggleBookmark = async () => {
-    if (ApiRequesting_Bookmark) return;
-    if (isBookmarked) {
-      setApiRequesting_Bookmark(true);
-      const res = await App_API_Client.bookmark.removeBookmark(bookmark.id);
-      setApiRequesting_Bookmark(false);
-      
-      if (res?.success) onUpdate({
-        ...data,
-        bookmark: [],
-        _count: {
-          bookmark: data._count.bookmark - 1
-        }
-      })
-
-    } else {
-      setApiRequesting_Bookmark(true);
-      const res = await App_API_Client.bookmark.addBookmark(data.id);
-      setApiRequesting_Bookmark(false);
-      
-      if (res?.success) onUpdate({
-        ...data,
-        bookmark: [ res.data ],
-        _count: {
-          bookmark: data._count.bookmark + 1
-        }
-      })
-
-    }
-  };
 
   return (
-    <div className="rounded-md bg-gray-200 px-4 py-3 m-1">
+    <div className="rounded-md px-4 py-3 m-1 bg-[var(--background-sub)]">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <Link href={`/drill/${data.id}`}>
-            <h3 className="text-sm font-bold text-gray-900">
+          <Link href={genLink?.(data) ?? `/drill/${data.id}`}>
+            <h3 className="text-sm font-bold p-1 border-b border-b-gray-300 text-[var(--text-color)]">
               {data.title}
             </h3>
           </Link>
-          <div className="mt-0.5 flex items-baseline gap-2">
+          <div className="mt-0.5 flex flex-col items-baseline overflow-hidden">
             <p
-              className={`text-xs text-gray-600 ${
+              className={`text-[var(--text-color)] ${
                 expanded ? "" : "truncate"
               }`}
             >
               {data.description}
             </p>
+            <div className="flex gap-2">
+              {
+                expanded &&
+                data.drillTag.map((drillTag, i) => (
+                  <AppTag key={i}>
+                    {drillTag.tag.name}
+                  </AppTag>
+                ))
+              }
+            </div>
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
-              className="shrink-0 text-xs text-gray-600"
+              className="text-xs cursor-pointer text-[var(--text-color-sub)]"
             >
-              もっと見る{expanded ? "▲" : "▼"}
+              {expanded ? "閉じる▲" : "もっと見る▼"}
             </button>
           </div>
         </div>
@@ -102,29 +82,31 @@ export default function QuizCard({
             />
             {likes}
           </button> */}
-          <button
-            type="button"
-            onClick={toggleBookmark}
-            aria-pressed={isBookmarked}
-            aria-label="ブックマーク"
-            className="flex items-center gap-1 text-sm font-bold text-gray-800 transition-transform active:scale-90 cursor-pointer"
-          >
-            {
-              ApiRequesting_Bookmark ? 
-              <LoaderCircle
-                size={24}
-                className="animate-spin"
-              /> :
-              <Bookmark
-                size={24}
-                fill={isBookmarked ? "#538ce8" : "none"}
-                stroke={isBookmarked ? "#538ce8" : "#374151"}
-                strokeWidth={1}
-                className="transition-all duration-150"
-              />
+          <BookMarkButton useInputValue={true} drillId={data.id} bookmarkCount={data._count.bookmark} bookmarkId={bookmark?.id} onUpdate={(bid) => {
+            if (bid !== undefined) {
+              onUpdate({
+                ...data,
+                bookmark: [
+                  {
+                    id: bid
+                  }
+                ],
+                _count: {
+                  bookmark: data._count.bookmark + 1,
+                  questions: data._count.questions
+                }
+              })
+            } else {
+              onUpdate({
+                ...data,
+                bookmark: [],
+                _count: {
+                  bookmark: data._count.bookmark - 1,
+                  questions: data._count.questions
+                }
+              })
             }
-            {data._count.bookmark}
-          </button>
+          }}/>
         </div>
       </div>
     </div>

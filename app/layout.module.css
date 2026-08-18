@@ -12,8 +12,9 @@
     背景を白
     */
 
-    border: 2px solid #ffffff;
+    border: 2px solid var(--background-sub);
     /*わかりやすいように仮で外枠白くしてます*/
+    overflow: hidden;
 
     border-radius: 16px;
 }

@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { app_api_map, app_api_response, app_api_response_get } from "../app.api.type";
-import { App_DB_Drill_ } from "@/app/app.type";
+import { app_api_map, app_api_map2, app_api_response, app_api_response_get } from "../app.api.type";
+import { App_DB_Drill_, App_DB_Drill_Update } from "@/app/app.type";
 import { getServerSession } from "next-auth";
 import { DB_Util } from "@/app/_lib/server/db/util";
 import { getDrill_Query } from "@/app/_lib/server/db/drill";
+import { Prisma } from "@/app/_lib/server/generated/prisma/client";
+import { API_ERROR } from "../server";
+import { db } from "@/app/_lib/server/db/db";
+import { getSession } from "next-auth/react";
 
 
 
@@ -28,6 +32,28 @@ export type app_api_drill = app_api_map<{
     };
 }>
 
+
+
+export type app_api_drill2 = app_api_map2<{
+    "create": {
+        req: {
+            params: undefined;
+            body: {
+                title: string;
+                description: string;
+                categoryId: number;
+            }
+        };
+        res: app_api_response<Prisma.DrillGetPayload<{select: {id: true}}>>
+    };
+    "update": {
+        req: {
+            params: undefined;
+            body: App_DB_Drill_Update;
+        };
+        res: app_api_response<boolean>
+    }
+}>
 
 
 
@@ -75,4 +101,131 @@ export async function GET(req: NextRequest) {
     }
     
     return NextResponse.json(res)
+}
+
+
+
+
+
+
+export async function POST(req: NextRequest) {
+    const [ session, body] = await Promise.all([
+        getServerSession(),
+        req.json() as Promise<app_api_drill2["create"]["req"]["body"]>
+    ]);
+
+
+    const email = session?.user?.email;
+    if (!email) return API_ERROR.Unauthorized;
+
+
+    const userId = await DB_Util.User.getUserId({ email });
+    if (!userId) return API_ERROR.Unauthorized;
+
+
+    const drill = await db.drill.create({
+        data: {
+            userId,
+            categoryId: body.categoryId,
+
+            title: body.title,
+            description: body.description
+        },
+        select: {
+            id: true
+        }
+    }).then(d => d ?? undefined).catch(() => undefined);
+
+
+
+
+    const res: app_api_response<Prisma.DrillGetPayload<{
+        select: {
+            id: true
+        }
+    }>> = drill ? {
+        success: true,
+        data: drill
+    } : {
+        success: false,
+        error: "問題集の作成に失敗しました"
+    }
+
+    return NextResponse.json(res);
+    
+}
+
+
+
+
+
+
+export async function PUT(req: NextRequest) {
+    const [session, body] = await Promise.all([
+        getSession(),
+        req.json() as Promise<App_DB_Drill_Update>
+    ]);
+    
+    if (!session) return API_ERROR.Unauthorized;
+
+    const { id, title, description, questions } = body;
+    
+    
+    
+    
+
+    
+    
+    
+    const update = await db.$transaction([
+        db.drill.update({
+            where: {
+                id
+            },
+            data: {
+                title,
+                description
+            }
+        }),
+        ...questions.map((question) => (
+            db.question.update({
+                where: {
+                    id: question.id
+                },
+                data: {
+                    body: question.body,
+                    sortIndex: question.sortIndex,
+                    choices: {
+                        updateMany: question.choices.map((choice) => (
+                            {
+                                where: {
+                                    id: choice.id
+                                },
+                                data: {
+                                    body: choice.body,
+                                    isCorrect: choice.isCorrect,
+                                    sortIndex: choice.sortIndex
+                                }
+                            }
+                        ))
+                    }
+                }
+            })
+        ))
+    ]).then(d => d ? true : false).catch(() => false);
+    
+    
+
+
+    const res: app_api_response<boolean> = update ? {
+        success: true,
+        data: update
+    } : {
+        success: false,
+        error: "更新処理に失敗しました"
+    }
+
+
+    return NextResponse.json(res);
+    
 }

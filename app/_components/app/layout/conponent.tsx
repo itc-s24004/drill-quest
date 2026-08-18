@@ -9,16 +9,19 @@ type AppLayoutProps = {
 
 export function AppLayout({header, children, footer, onScrollEnd}: AppLayoutProps) {
     return (
-        <div className="flex flex-col h-full overflow-y-auto px-4"
+        <div
+            className="flex flex-col h-full overflow-y-auto app_scroll bg-[var(--background)]"
             onScroll={(ev) => {
                 const {clientHeight, scrollTop, scrollHeight} = ev.currentTarget;
-                if (clientHeight + scrollTop >= scrollHeight) onScrollEnd?.();
+                if (Math.ceil(clientHeight + scrollTop) >= Math.floor(scrollHeight)) onScrollEnd?.();
             }}
         >
-            <div className="sticky top-0">
+            <div className="sticky top-0 bg-[var(--background-over)] backdrop-blur-xs p-4">
                 {header}
             </div>
-            {children}
+            <div className="mx-4 flex flex-col">
+                {children}
+            </div>
             <div className="flex-1" />
             <div className="sticky bottom-0">
                 {footer}

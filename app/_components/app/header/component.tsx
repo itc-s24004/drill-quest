@@ -65,7 +65,7 @@ export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderPr
 
   
     return (
-        <div className="flex flex-col bg-white/90 gap-3 px-4 pb-3 pt-4">
+        <div className="flex flex-col gap-3 pb-3">
             <div className="flex items-center gap-3">
                 <Link href={"/profile"} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-gray-50 cursor-pointer">
                     <User size={18} color="#6b7280" strokeWidth={1.8} />
