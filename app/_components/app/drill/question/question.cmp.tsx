@@ -9,8 +9,8 @@ type App_QuestionProps = Prisma.QuestionGetPayload<{
 
 export function App_Question({body, children}: App_QuestionProps) {
     return (
-        <div className="pb-6 mb-6 border-b border-[#DADCE0]">
-            <div className="my-2 text-[14px] text-[#202124] whitespace-pre-line">
+        <div className="pb-6 mb-6 border-b border-[var(--background-sub)]">
+            <div className="my-2 text-[14px] text-[var(--text-color)] whitespace-pre-line">
                 {body}
             </div>
 

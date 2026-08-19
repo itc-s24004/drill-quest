@@ -18,6 +18,16 @@ function getTags({ name, max }: getTags_Query) {
 
 
 
+export type addTag_Query = {
+    name: string
+}
+
+function addTag({ name }: addTag_Query) {
+    
+}
+
+
+
 
 export const DB_Tag = {
     getTags

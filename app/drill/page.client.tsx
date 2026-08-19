@@ -43,16 +43,15 @@ export function PageClient({ data }: PageClientProps) {
         if (api_waiting) return;
         setApiWaiting(true);
         const result = await App_API_Client.answer.sendAnswer(drill.id, answers)
-        setApiWaiting(false);
         if (result?.success) {
             router.push(`/result/${result.data.resultId}`);
-            router.refresh();
 
         } else {
             setUpdate((c) => {
                 if (c !== update) return c;
                 return c+1;
             });
+            setApiWaiting(false);
 
         }
     }

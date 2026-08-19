@@ -145,6 +145,7 @@ type App_DB_Drill_ = Prisma.DrillGetPayload<{
         _count: {
             select: {
                 bookmark: true;
+                questions: true;
             }
         };
         bookmark: {
@@ -303,3 +304,87 @@ type App_DB_Tag = Prisma.TagGetPayload<{
         name: true;
     }
 }>
+
+
+
+
+type App_DB_UserDrill = Prisma.DrillGetPayload<{
+    select: {
+        id: true;
+        title: true;
+        description: true;
+        category: true;
+        publishedAt: true;
+        drillTag: {
+            select: {
+                id: true;
+                tag: {
+                    select: {
+                        id: true;
+                        name: true;
+                    }
+                }
+            }
+        };
+        questions: {
+            select: {
+                id: true;
+                sortIndex: true;
+                body: true;
+                choices: {
+                    select: {
+                        id: true;
+                        sortIndex: true;
+                        body: true;
+                        isCorrect: true;
+                    }
+                }
+            }
+        }
+    }
+}>
+
+
+
+
+type App_DB_Drill_Update = Prisma.DrillGetPayload<{
+    select: {
+        id: true;
+        title: true;
+        description: true;
+        questions: {
+            select: {
+                id: true;
+                body: true;
+                sortIndex: true;
+                choices: {
+                    select: {
+                        id: true;
+                        body: true;
+                        isCorrect: true;
+                        sortIndex: true;
+                    }
+                }
+            }
+        }
+    }
+}>
+
+
+
+type App_DB_Drill_Update_ClientCache = {
+    id: number;
+    title: string;
+    description: string;
+    questions: {
+        id: number;
+        sortIndex: number;
+        body: string;
+        choices: {
+            id?: number | undefined;
+            sortIndex: number;
+            body: string;
+            isCorrect: boolean;
+        }[];
+    }[];
+}

@@ -11,7 +11,7 @@ export type App_Drill_Search_Query_Raw = {
     title?: string | string[] | undefined;
     categoryId?: string | string[] | undefined;
     tagIds?: string | string[] | undefined;
-    bookmarked_only?: string | undefined;
+    bookmarked__only?: string | undefined;
 }
 
 
@@ -19,12 +19,13 @@ export default async function SearchPage({ searchParams }: {searchParams: Promis
     const session = await getServerSession();
 
 
-    const { title: _title, categoryId: _categoryId, tagIds: _tagIds, bookmarked_only: _bookmarked_only } = await searchParams;
+    const { title: _title, categoryId: _categoryId, tagIds: _tagIds, bookmarked__only: _bookmarked_only } = await searchParams;
 
     const title = _title && !Array.isArray(_title) ? _title : undefined;
     const categoryId = _categoryId && !Array.isArray(_categoryId) ? Number(_categoryId) : undefined;
     const tagIds = _tagIds ? Array.isArray(_tagIds) ? _tagIds.map(Number) : [Number(_tagIds)] : undefined;
-    const bookmarked__only = _bookmarked_only !== undefined;
+    console.log(_bookmarked_only)
+    const bookmarked__only = _bookmarked_only !== undefined && _bookmarked_only !== "false";
 
 
 
@@ -49,7 +50,7 @@ export default async function SearchPage({ searchParams }: {searchParams: Promis
 
   
 
-  return (
+    return (
         <DrillListView data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
         // <PageClient data={data ?? []} categories={categories} query={{title, categoryId, tagIds, bookmarked__only}}/>
     )

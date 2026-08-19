@@ -37,7 +37,7 @@ export function BookMarkButton({ useInputValue, drillId: i_drillId, bookmarkCoun
             if (res?.success) {
                 set_BookmarkCount(c => c-1);
                 set_BookmarkId(undefined);
-                onUpdate?.(res.data.id)
+                onUpdate?.()
             }
 
         } else {
@@ -48,7 +48,7 @@ export function BookMarkButton({ useInputValue, drillId: i_drillId, bookmarkCoun
             if (res?.success) {
                 set_BookmarkCount(c => c+1);
                 set_BookmarkId(res.data.id);
-                onUpdate?.()
+                onUpdate?.(res.data.id)
             }
 
         }
@@ -62,7 +62,7 @@ export function BookMarkButton({ useInputValue, drillId: i_drillId, bookmarkCoun
             aria-pressed={bookmarked}
             disabled={ApiRequesting_Bookmark}
             aria-label="ブックマーク"
-            className="flex items-center gap-1 text-sm font-bold text-gray-800 transition-transform active:scale-90 cursor-pointer disabled:cursor-not-allowed"
+            className="flex items-center gap-1 text-sm font-bold transition-transform active:scale-90 cursor-pointer disabled:cursor-not-allowed text-[var(--text-color)]"
         >
             {
                 ApiRequesting_Bookmark ? 
@@ -73,7 +73,7 @@ export function BookMarkButton({ useInputValue, drillId: i_drillId, bookmarkCoun
                 <Bookmark
                     size={24}
                     fill={bookmarked ? "#538ce8" : "none"}
-                    stroke={bookmarked ? "#538ce8" : "#374151"}
+                    stroke={bookmarked ? "#538ce8" : "var(--text-color-sub)"}
                     strokeWidth={1}
                     className="transition-all duration-150"
                 />

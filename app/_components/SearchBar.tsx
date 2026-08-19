@@ -20,7 +20,7 @@ export default function SearchBar({ keywork, onSubmit, tags, onClickTag, onChang
         ev.preventDefault();
         onSubmit()
       }}
-      className="flex items-center gap-2 rounded-full bg-gray-200 px-4 py-2"
+      className="flex items-center gap-2 rounded-full bg-[var(--background-sub)] px-4 py-2"
     >
       <input
         type="text"

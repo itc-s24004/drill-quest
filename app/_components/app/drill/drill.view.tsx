@@ -16,8 +16,8 @@ export function DrillView({title, description, header, children, footer, onScrol
             header={
                 <div className="flex items-center justify-between border-b border-[#DADCE0] px-5 py-3">
                     <div className="flex flex-col">
-                        <h2 className="text-lg font-extrabold text-gray-900">{title}</h2>
-                        <p className="mt-1 text-sm text-gray-500">{description}</p>
+                        <h2 className="text-lg font-extrabold text-gray-900 dark:text-white">{title}</h2>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">{description}</p>
                     </div>
 
                     {

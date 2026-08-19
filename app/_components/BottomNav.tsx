@@ -14,7 +14,7 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/search?bookmarked_only" },
+  { key: "bookmark", label: "ブックマーク", icon: Bookmark, href: "/search?bookmarked__only" },
   { key: "search", label: "検索", icon: Search, href: "/search" },
   { key: "home", label: "ホーム", icon: Home, href: "/" },
   { key: "quizzes", label: "問題集", icon: BookOpen, href: "/mydrill" },
@@ -31,7 +31,7 @@ export default function BottomNav() {
 
   return (
     <nav className="mt-auto w-full pb-3" aria-label="メインナビゲーション">
-      <div className="rounded-2xl border border-gray-300 bg-gray-50 px-2 py-2">
+      <div className="rounded-2xl border px-2 py-2 backdrop-blur-xs mx-4 bg-[var(--background-over)] border-[var(--background-sub)]">
         <ul className="flex items-stretch justify-between">
           {NAV_ITEMS.map(({ key, label, icon: Icon, href }) => {
             const isActive = activeKey === key;
@@ -50,13 +50,13 @@ export default function BottomNav() {
                     <Icon
                       size={16}
                       strokeWidth={isActive ? 2.2 : 1.6}
-                      color={isActive ? "#ffffff" : "#6b7280"}
+                      color={isActive ? "#ffffff" : "var(--text-color-sub)"}
                     />
                   </span>
                   <span
                     className="text-[10px] leading-tight"
                     style={{
-                      color: isActive ? "#3b82f6" : "#6b7280",
+                      color: isActive ? "#3b82f6" : "var(--text-color)",
                       fontWeight: isActive ? 700 : 400,
                     }}
                   >
