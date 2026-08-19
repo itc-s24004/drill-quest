@@ -45,7 +45,7 @@ export function PageClient({ result }: PageClientProps) {
                 </span>
             </div>
 
-            <div className="bg-white rounded-lg p-8">
+            <div className="rounded-lg p-8">
                 {/* スコアサマリー */}
                 <div className="text-center py-6">
                     <div
@@ -53,10 +53,10 @@ export function PageClient({ result }: PageClientProps) {
                         style={{ background: ACCENT_LIGHT, color: ACCENT }}
                     >
                         <span className="text-2xl font-bold leading-none">{correctCount}</span>
-                        <span className="text-xs font-medium text-gray-500 mt-1">/ {totalCount}問</span>
+                        <span className="text-xs font-medium text-[var(--background)] mt-1">/ {totalCount}問</span>
                     </div>
-                    <p className="text-lg font-bold text-gray-900 mb-1.5">お疲れさまでした！</p>
-                    <p className="text-sm text-gray-500 mb-6">
+                    <p className="text-lg font-bold text-[var(--text-color)] mb-1.5">お疲れさまでした！</p>
+                    <p className="text-sm text-[var(--text-color-sub)] mb-6">
                         {drill.title}を{totalCount}問中{correctCount}問正解しました。
                     </p>
 
