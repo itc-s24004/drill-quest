@@ -36,8 +36,8 @@ export function PageClient({ data }: PageClientProps) {
                         onClick={async () => {
                             setApi_Requesting(true);
                             const res = await App_API_Client.drill.createDrill({
-                                title: "hello",
-                                description: "world",
+                                title: "新しい問題集",
+                                description: "問題集概要",
                                 categoryId: 1
                             });
                             if (res?.success) {
