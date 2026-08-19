@@ -191,7 +191,7 @@ export function PageClient({ drill }: PageClientProps) {
                                                 }}
                                                 onClick={(ev) => ev.stopPropagation()}
                                                 rows={1}
-                                                className="w-full resize-none rounded-xl bg-[var(--background)] px-3 py-2 text-base text-[var(--text-color)] outline-none transition focus:border-[var(--text-color)]"
+                                                className="w-full resize-none rounded-xl bg-[var(--background-sub)] px-3 py-2 text-base text-[var(--text-color)] outline-none transition focus:border-[var(--text-color)]"
                                                 placeholder="選択肢を入力してください (空にすると保存時に削除されます)"
                                             />
                                         </App_Choice>
