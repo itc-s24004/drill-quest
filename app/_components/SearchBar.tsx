@@ -30,7 +30,7 @@ export default function SearchBar({ keywork, onSubmit, tags, onClickTag, onChang
           onChangeKeywork(ev.target.value)
         }}
         placeholder="検索ワードを入力"
-        className="flex-1 bg-transparent text-sm text-gray-800 placeholder:text-gray-500 outline-none"
+        className="flex-1 bg-transparent text-sm text-[var(--text-color)] placeholder:text-[var(--text-color-sub)] outline-none"
       />
       {
         tags.map((tag, i) => (
