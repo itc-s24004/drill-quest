@@ -9,6 +9,8 @@ import Link from "next/link";
 import { StateUpdateListener } from "@/app/_lib/client/update/state";
 import { App_API_Client } from "@/app/api/app/client";
 import { AppTag } from "../tag/tag.cmp";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 
 
@@ -21,6 +23,9 @@ type HeaderProps = {
 
 
 export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderProps) {
+    const session = useSession();
+    const router = useRouter();
+    
     const [update, setUpdate] = useState(0);
     
     const [currentQuery, setCurrentQuery] = useState(query);
@@ -67,9 +72,18 @@ export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderPr
     return (
         <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
-                <Link href={"/profile"} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--background-sub)] cursor-pointer">
+                <button
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--background-sub)] cursor-pointer"
+                    onClick={() => {
+                        if (session.data) {
+                            router.push("/profile")
+                        } else {
+                            signIn("google")
+                        }
+                    }}
+                >
                     <User size={18} color="#6b7280" strokeWidth={1.8} />
-                </Link>
+                </button>
                 <div className="flex-1 relative">
                     <SearchBar keywork={currentQuery.title ?? ""} tags={tags}
                         onChangeKeywork={(keyword) => {

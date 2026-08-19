@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 // TODO: バックエンド実装後、ログイン中のユーザー情報の取得結果に差し替える
 const INITIAL_PROFILE = {
@@ -26,7 +27,7 @@ export default function Profile() {
 
   const handleLogout = () => {
     // TODO: バックエンド実装後、ここでログアウト処理（セッション破棄・トークン削除など）を行う
-    router.push("/login");
+    signOut({callbackUrl: "/"})
   };
 
   return (
