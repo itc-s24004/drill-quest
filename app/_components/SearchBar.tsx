@@ -43,7 +43,7 @@ export default function SearchBar({ keywork, onSubmit, tags, onClickTag, onChang
       }
       <button
         type="submit"
-        className="shrink-0 rounded-full bg-blue-400 px-4 py-1.5 text-sm font-bold text-white"
+        className="shrink-0 rounded-full bg-blue-400 px-4 py-1.5 text-sm font-bold text-white cursor-pointer"
       >
         検索
       </button>
