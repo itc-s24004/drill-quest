@@ -59,13 +59,13 @@ export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderPr
 
 
     function getInputTagName(input: string) {
-        return input.match(/(?:^|\s)#[^\s]*$/)?.[0].trimStart().slice(1);
+        return input.match(/(?:^|\s)[^\s]*$/)?.[0].trimStart();
     }
     
 
   
     return (
-        <div className="flex flex-col gap-3 pb-3">
+        <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
                 <Link href={"/profile"} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--background-sub)] cursor-pointer">
                     <User size={18} color="#6b7280" strokeWidth={1.8} />
@@ -122,7 +122,7 @@ export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderPr
                                                 if (!title) return q;
                                                 const tag = getInputTagName(title);
                                                 if (!tag) return q;
-                                                return {...q, title: title.slice(0, title.length - tag.length - 1)}
+                                                return {...q, title: title.slice(0, title.length - tag.length)}
                                             })
                                             setS_Tags([]);
                                         }}

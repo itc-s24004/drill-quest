@@ -369,3 +369,22 @@ type App_DB_Drill_Update = Prisma.DrillGetPayload<{
         }
     }
 }>
+
+
+
+type App_DB_Drill_Update_ClientCache = {
+    id: number;
+    title: string;
+    description: string;
+    questions: {
+        id: number;
+        sortIndex: number;
+        body: string;
+        choices: {
+            id?: number | undefined;
+            sortIndex: number;
+            body: string;
+            isCorrect: boolean;
+        }[];
+    }[];
+}

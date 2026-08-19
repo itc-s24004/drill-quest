@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { app_api_map, app_api_map2, app_api_response, app_api_response_get } from "../app.api.type";
-import { App_DB_Drill_, App_DB_Drill_Update } from "@/app/app.type";
+import { app_api_map, app_api_map2, app_api_response, app_api_response_error, app_api_response_get } from "../app.api.type";
+import { App_DB_Drill_, App_DB_Drill_Update, App_DB_Drill_Update_ClientCache } from "@/app/app.type";
 import { getServerSession } from "next-auth";
 import { DB_Util } from "@/app/_lib/server/db/util";
 import { getDrill_Query } from "@/app/_lib/server/db/drill";
@@ -49,7 +49,9 @@ export type app_api_drill2 = app_api_map2<{
     "update": {
         req: {
             params: undefined;
-            body: App_DB_Drill_Update;
+            body: App_DB_Drill_Update_ClientCache | {
+                publish: true
+            } & Prisma.DrillGetPayload<{select: {id: true}}>;
         };
         res: app_api_response<boolean>
     }
@@ -107,7 +109,6 @@ export async function GET(req: NextRequest) {
 
 
 
-
 export async function POST(req: NextRequest) {
     const [ session, body] = await Promise.all([
         getServerSession(),
@@ -160,20 +161,71 @@ export async function POST(req: NextRequest) {
 
 
 
+
+
 export async function PUT(req: NextRequest) {
     const [session, body] = await Promise.all([
-        getSession(),
-        req.json() as Promise<App_DB_Drill_Update>
+        getServerSession(),
+        req.json() as Promise<app_api_drill2["update"]["req"]["body"]>
     ]);
     
-    if (!session) return API_ERROR.Unauthorized;
+    const email = session?.user?.email;
+    if (!email) return API_ERROR.Unauthorized;
 
+    console.log(body)
+
+    const publishRequest = "publish" in body;
+
+    if (publishRequest) {
+        if (body.publish) {
+            const res = await db.drill.update({
+                where: {
+                    id: body.id,
+                    user: {
+                        email: {
+                            equals: email
+                        }
+                    }
+                },
+                data: {
+                    publishedAt: new Date()
+                },
+                select: {
+                    id: true
+                }
+            }).then(d => d ? true : false).catch(() => false);
+            return res ?
+                NextResponse.json<app_api_drill2["update"]["res"]>({success: true, data: true}) :
+                NextResponse.json<app_api_response_error>({success: false, error: "公開処理に失敗しました"})
+        }
+        return NextResponse.json<app_api_drill2["update"]["res"]>({success: false, error: "非公開にすることはできません"})
+    }
+    
+    
     const { id, title, description, questions } = body;
     
     
     
     
 
+    
+    
+    
+    const hasDrill = await db.drill.findUnique({
+        where: {
+            id,
+            user: {
+                email: {
+                    equals: email
+                }
+            }
+        },
+        select: {
+            id: true
+        }
+    }).then(d => d ? true : false).catch(() => false);
+
+    if (!hasDrill) return API_ERROR.Forbidden;
     
     
     
@@ -185,6 +237,9 @@ export async function PUT(req: NextRequest) {
             data: {
                 title,
                 description
+            },
+            select: {
+                id: true
             }
         }),
         ...questions.map((question) => (
@@ -196,7 +251,7 @@ export async function PUT(req: NextRequest) {
                     body: question.body,
                     sortIndex: question.sortIndex,
                     choices: {
-                        updateMany: question.choices.map((choice) => (
+                        updateMany: question.choices.filter(c => c.id !== undefined).map((choice) => (
                             {
                                 where: {
                                     id: choice.id
@@ -207,11 +262,35 @@ export async function PUT(req: NextRequest) {
                                     sortIndex: choice.sortIndex
                                 }
                             }
-                        ))
+                        )),
+                        createMany: {
+                            data: question.choices.filter(c => c.id === undefined).map((choice) => (
+                                {
+                                    body: choice.body,
+                                    sortIndex: choice.sortIndex,
+                                    isCorrect: choice.isCorrect
+                                }
+                            ))
+                        },
+                        deleteMany: {
+                            id: {
+                                in: question.choices.filter(c => c.body.length === 0).map(c => c.id).filter(i => i !== undefined)
+                            }
+                        }
                     }
+                },
+                select: {
+                    id: true
                 }
             })
-        ))
+        )),
+        db.question.deleteMany({
+            where: {
+                id: {
+                    in: questions.filter(q => q.body.length === 0).map(q => q.id)
+                }
+            }
+        })
     ]).then(d => d ? true : false).catch(() => false);
     
     
@@ -227,5 +306,4 @@ export async function PUT(req: NextRequest) {
 
 
     return NextResponse.json(res);
-    
 }

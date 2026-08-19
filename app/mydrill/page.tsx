@@ -11,6 +11,7 @@ export default async function Page() {
 
     const [ drill, ownerId ] = await Promise.all([
         DB_Util.Drill.getDrills_({
+            requestUserEmail: email,
             ownerEmail: email
         }),
 

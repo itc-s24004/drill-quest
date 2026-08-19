@@ -16,16 +16,22 @@ export function AppLayout({header, children, footer, onScrollEnd}: AppLayoutProp
                 if (Math.ceil(clientHeight + scrollTop) >= Math.floor(scrollHeight)) onScrollEnd?.();
             }}
         >
-            <div className="sticky top-0 bg-[var(--background-over)] backdrop-blur-xs p-4">
-                {header}
-            </div>
-            <div className="mx-4 flex flex-col">
+            {
+                header &&
+                <div className="sticky top-0 bg-[var(--background-over)] backdrop-blur-xs p-4">
+                    {header}
+                </div>
+            }
+            <div className="mx-4 flex flex-col m-4">
                 {children}
             </div>
             <div className="flex-1" />
-            <div className="sticky bottom-0">
-                {footer}
-            </div>
+            {
+                footer &&
+                <div className="sticky bottom-0">
+                    {footer}
+                </div>
+            }
         </div>
     )
 }

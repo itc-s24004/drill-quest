@@ -64,8 +64,14 @@ export default async function Page({ params }: PageProps) {
                                 sortIndex: true,
                                 body: true,
                                 isCorrect: true
+                            },
+                            orderBy: {
+                                sortIndex: "asc"
                             }
                         }
+                    },
+                    orderBy: {
+                        sortIndex: "asc"
                     }
                 }
             }
