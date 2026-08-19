@@ -17,7 +17,7 @@ export function App_Choice({body, selected, onClick, children}: App_ChoiceProps)
             onClick={onClick}
             className={
                 "flex items-center gap-3 rounded-xl border px-[14px] py-3 text-left transition-colors cursor-pointer bg-[var(--background)] "
-                + (selected ? "border-[#60A5FA]" : "border-[#DADCE0]")
+                + (selected ? "border-[#60A5FA]" : "border-[var(--text-color-sub)]")
             }
         >
             {
