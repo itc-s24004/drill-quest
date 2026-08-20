@@ -345,6 +345,19 @@ type App_DB_UserDrill = Prisma.DrillGetPayload<{
 }>
 
 
+type App_DB_DrillTag = Prisma.DrillTagGetPayload<{
+    select: {
+        id: true;
+        tag: {
+            select: {
+                id: true;
+                name: true;
+            }
+        }
+    }
+}>
+
+
 
 
 type App_DB_Drill_Update = Prisma.DrillGetPayload<{
@@ -352,6 +365,7 @@ type App_DB_Drill_Update = Prisma.DrillGetPayload<{
         id: true;
         title: true;
         description: true;
+        categoryId: true;
         questions: {
             select: {
                 id: true;
@@ -376,6 +390,7 @@ type App_DB_Drill_Update_ClientCache = {
     id: number;
     title: string;
     description: string;
+    categoryId: number;
     questions: {
         id: number;
         sortIndex: number;

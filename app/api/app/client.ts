@@ -9,6 +9,7 @@ import { App_API_Answer } from "./answer/client";
 import { App_API_Tag } from "./tag/client";
 import { App_API_QuestionChoice } from "./choice/client";
 import { App_API_Question } from "./question/client";
+import { App_API_DrillTag } from "./drilltag/client";
 
 
 export async function api_get<api_map extends app_api_map, type extends keyof api_map, raw_response extends api_map[type]["res"] = api_map[type]["res"], response = app_api_response<raw_response> | undefined >(path: string, searchparams: api_map[type]["req"]): Promise<response> {
@@ -137,5 +138,6 @@ export const App_API_Client = {
     answer: App_API_Answer,
     tag: App_API_Tag,
     question: App_API_Question,
-    choice: App_API_QuestionChoice
+    choice: App_API_QuestionChoice,
+    drillTag: App_API_DrillTag
 }

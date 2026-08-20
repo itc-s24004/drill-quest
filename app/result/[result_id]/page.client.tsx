@@ -1,21 +1,16 @@
 "use client"
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { AppLayout } from "@/app/_components/app/layout/conponent";
 import { App_DB_Result_Detail } from "@/app/app.type"
+import Link from "next/link";
 
 type PageClientProps = {
     result: App_DB_Result_Detail;
 }
 
-// アクセントカラー(モック準拠)
-const ACCENT = "#2F6F5E";
-const ACCENT_LIGHT = "#E7F2EE";
-
 export function PageClient({ result }: PageClientProps) {
     const { drill } = result;
-    const router = useRouter();
     const [showDetail, setShowDetail] = useState(false);
 
     const correctCount = drill.questions.reduce((total, value) => {
@@ -24,22 +19,14 @@ export function PageClient({ result }: PageClientProps) {
     }, 0);
     const totalCount = drill.questions.length;
 
-    const handleRestart = () => {
-        router.push(`/drill/${drill.id}`);
-    };
-
-    const handleGoHome = () => {
-        router.push("/");
-    };
 
     return (
         <AppLayout>
             {/* トップバー */}
             <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-6">
-                <span className="text-base font-bold text-gray-900">採点結果</span>
+                <span className="text-base font-bold text-blue-500">採点結果</span>
                 <span
-                    className="text-xs font-bold rounded-full px-3 py-1"
-                    style={{ color: ACCENT, background: ACCENT_LIGHT }}
+                    className="text-xs font-bold rounded-full px-3 py-1 text-emerald-800 bg-[var(--text-color)]"
                 >
                     全{totalCount}問
                 </span>
@@ -47,10 +34,9 @@ export function PageClient({ result }: PageClientProps) {
 
             <div className="rounded-lg p-8">
                 {/* スコアサマリー */}
-                <div className="text-center py-6">
+                <div className="flex flex-col gap-2 text-center py-6">
                     <div
-                        className="w-24 h-24 rounded-full flex flex-col items-center justify-center mx-auto mb-5"
-                        style={{ background: ACCENT_LIGHT, color: ACCENT }}
+                        className="w-24 h-24 rounded-full flex flex-col items-center justify-center mx-auto mb-5 text-emerald-800 bg-[var(--text-color)]"
                     >
                         <span className="text-2xl font-bold leading-none">{correctCount}</span>
                         <span className="text-xs font-medium text-[var(--background)] mt-1">/ {totalCount}問</span>
@@ -60,34 +46,31 @@ export function PageClient({ result }: PageClientProps) {
                         {drill.title}を{totalCount}問中{correctCount}問正解しました。
                     </p>
 
-                    <button
-                        onClick={handleRestart}
-                        className="w-full py-3 rounded-full text-white text-sm font-bold cursor-pointer"
-                        style={{ background: ACCENT }}
+                    <Link
+                        href={`/drill/${drill.id}`}
+                        className="w-full py-3 rounded-full text-white text-sm font-bold cursor-pointer bg-emerald-800"
                     >
                         もう一度挑戦する
-                    </button>
+                    </Link>
 
                     <button
                         onClick={() => setShowDetail((v) => !v)}
-                        className="w-full py-3 rounded-full bg-white text-sm font-bold cursor-pointer mt-2.5 border-[1.5px]"
-                        style={{ borderColor: ACCENT, color: ACCENT }}
+                        className="w-full py-3 rounded-full bg-white text-sm font-bold cursor-pointer border-[1.5px] text-emerald-800"
                     >
                         {showDetail ? "採点内容を隠す" : "採点内容を表示"}
                         <span
-                            className="inline-block ml-1.5 transition-transform duration-200"
-                            style={{ transform: showDetail ? "rotate(180deg)" : "none" }}
+                            className={"inline-block ml-1.5 transition-transform duration-200 " + (showDetail ? "rotate-180" : "rotate-0")}
                         >
                             ▾
                         </span>
                     </button>
 
-                    <button
-                        onClick={handleGoHome}
+                    <Link
+                        href={"/"}
                         className="w-full py-3 rounded-full bg-transparent text-gray-500 text-sm font-bold cursor-pointer mt-1"
                     >
                         ホーム画面に戻る
-                    </button>
+                    </Link>
                 </div>
 
                 {/* 問題ごとの詳細 */}

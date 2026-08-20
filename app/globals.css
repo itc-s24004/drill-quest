@@ -9,6 +9,9 @@
   --text-color: #171717;
   --text-color-sub: #838383;
   
+  --app-main: rgb(0, 122, 85);
+  --app-accent: rgb(0, 141, 206);
+  
   
   --foreground: #171717;
   --foreground-sub: #838383;
@@ -31,7 +34,7 @@
 
 
     --text-color: #ededed;
-    --text-color-sub: rgb(191, 191, 191);
+    --text-color-sub: rgb(170, 170, 170);
   }
 }
 
@@ -42,10 +45,11 @@ body {
 }
 
 
+*:not(.app_scroll)::-webkit-scrollbar {
+  display: none;
+}
 
-/* .app_scroll::-webkit-scrollbar-track {
-  background: red;
-} */
+
 .app_scroll::-webkit-scrollbar {
   width: 10px;
   height: 10px;

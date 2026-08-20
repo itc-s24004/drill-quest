@@ -54,6 +54,15 @@ export type app_api_drill2 = app_api_map2<{
             } & Prisma.DrillGetPayload<{select: {id: true}}>;
         };
         res: app_api_response<boolean>
+    };
+    "delete": {
+        req: {
+            params: {
+                id: number;
+            };
+            body: undefined;
+        };
+        res: app_api_response<boolean>
     }
 }>
 
@@ -172,8 +181,6 @@ export async function PUT(req: NextRequest) {
     const email = session?.user?.email;
     if (!email) return API_ERROR.Unauthorized;
 
-    console.log(body)
-
     const publishRequest = "publish" in body;
 
     if (publishRequest) {
@@ -185,6 +192,9 @@ export async function PUT(req: NextRequest) {
                         email: {
                             equals: email
                         }
+                    },
+                    publishedAt: {
+                        equals: null
                     }
                 },
                 data: {
@@ -202,7 +212,7 @@ export async function PUT(req: NextRequest) {
     }
     
     
-    const { id, title, description, questions } = body;
+    const { id, title, description, questions, categoryId } = body;
     
     
     
@@ -227,71 +237,87 @@ export async function PUT(req: NextRequest) {
 
     if (!hasDrill) return API_ERROR.Forbidden;
     
+
     
     
-    const update = await db.$transaction([
-        db.drill.update({
-            where: {
-                id
-            },
-            data: {
-                title,
-                description
-            },
-            select: {
-                id: true
-            }
-        }),
-        ...questions.map((question) => (
-            db.question.update({
+    const update = await db.$transaction(async (tx) => {
+        await Promise.all([
+            tx.drill.update({
                 where: {
-                    id: question.id
+                    id
                 },
                 data: {
-                    body: question.body,
-                    sortIndex: question.sortIndex,
-                    choices: {
-                        updateMany: question.choices.filter(c => c.id !== undefined).map((choice) => (
-                            {
-                                where: {
-                                    id: choice.id
-                                },
-                                data: {
-                                    body: choice.body,
-                                    isCorrect: choice.isCorrect,
-                                    sortIndex: choice.sortIndex
-                                }
-                            }
-                        )),
-                        createMany: {
-                            data: question.choices.filter(c => c.id === undefined).map((choice) => (
-                                {
-                                    body: choice.body,
-                                    sortIndex: choice.sortIndex,
-                                    isCorrect: choice.isCorrect
-                                }
-                            ))
-                        },
-                        deleteMany: {
-                            id: {
-                                in: question.choices.filter(c => c.body.length === 0).map(c => c.id).filter(i => i !== undefined)
-                            }
-                        }
-                    }
+                    title,
+                    description,
+                    categoryId
                 },
                 select: {
                     id: true
                 }
-            })
-        )),
-        db.question.deleteMany({
-            where: {
-                id: {
-                    in: questions.filter(q => q.body.length === 0).map(q => q.id)
+            }),
+            ...questions.filter(q => q.body.length > 0).map((question) => (
+                tx.question.update({
+                    where: {
+                        id: question.id,
+                        drill: {
+                            user: {
+                                email: {
+                                    equals: email
+                                }
+                            }
+                        }
+                    },
+                    data: {
+                        body: question.body,
+                        sortIndex: question.sortIndex,
+                        choices: {
+                            updateMany: question.choices.filter(c => c.id !== undefined).map((choice) => (
+                                {
+                                    where: {
+                                        id: choice.id
+                                    },
+                                    data: {
+                                        body: choice.body,
+                                        isCorrect: choice.isCorrect,
+                                        sortIndex: choice.sortIndex
+                                    }
+                                }
+                            )),
+                            createMany: {
+                                data: question.choices.filter(c => c.id === undefined).map((choice) => (
+                                    {
+                                        body: choice.body,
+                                        sortIndex: choice.sortIndex,
+                                        isCorrect: choice.isCorrect
+                                    }
+                                ))
+                            },
+                            deleteMany: {
+                                id: {
+                                    in: question.choices.filter(c => c.body.length === 0).map(c => c.id).filter(i => i !== undefined)
+                                }
+                            }
+                        }
+                    },
+                    select: {
+                        id: true
+                    }
+                })
+            )),
+            tx.question.deleteMany({
+                where: {
+                    id: {
+                        in: questions.filter(q => q.body.length === 0).map(q => q.id)
+                    }
                 }
-            }
-        })
-    ]).then(d => d ? true : false).catch(() => false);
+            })
+        ]);
+
+        
+    }, {timeout: 60000}).then(d => true).catch((e) => {
+        console.log(e);
+        return false
+    });
     
     
 
@@ -306,4 +332,46 @@ export async function PUT(req: NextRequest) {
 
 
     return NextResponse.json(res);
+}
+
+
+
+
+
+
+
+export async function DELETE(req: NextRequest) {
+    const session = await getServerSession();
+    const email = session?.user?.email;
+    
+    if (!email) return API_ERROR.Unauthorized;
+
+
+    const SP = req.nextUrl.searchParams;
+    const _drillId = SP.get("id") ?? undefined;
+    if (!_drillId) return;
+
+
+
+    const drillId = Number.parseInt(_drillId);
+
+
+
+    const res = await db.drill.delete({
+        where: {
+            id: drillId,
+            user: {
+                email: {
+                    equals: email
+                }
+            }
+        },
+        select: {
+            id: true
+        }
+    }).then(d => d ?? undefined).catch(() => undefined)
+
+
+
+    return NextResponse.json<app_api_drill2["delete"]["res"]>(res ? {success: true, data: true} : {success: false, error: "問題集の削除に失敗しました"})
 }

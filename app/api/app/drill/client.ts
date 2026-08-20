@@ -21,8 +21,15 @@ function updateDrill(drill: app_api_drill2["update"]["req"]["body"]) {
 
 
 
+function deleteDrill(q: app_api_drill2["delete"]["req"]["params"]) {
+    return api_client_req2<app_api_drill2, "delete">("/api/app/drill", "DELETE", q, undefined)
+}
+
+
+
 export const App_API_Drill = {
     searchDrills,
     createDrill,
-    updateDrill
+    updateDrill,
+    deleteDrill
 }

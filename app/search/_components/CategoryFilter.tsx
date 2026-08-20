@@ -14,7 +14,7 @@ export default function CategoryFilter({
   onChange,
 }: CategoryFilterProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-nowrap gap-2 overflow-x-auto">
       {categories.map((cat, i) => {
         const isActive = cat.id === active;
         return (
@@ -22,7 +22,7 @@ export default function CategoryFilter({
             key={i}
             type="button"
             onClick={() => onChange(cat.id)}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer ${
+            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
               isActive ? "bg-blue-400 text-white" : "bg-[var(--background-sub)] text-[var(--text-color)]"
             }`}
           >

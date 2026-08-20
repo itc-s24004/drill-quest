@@ -9,7 +9,7 @@ import Link from "next/link";
 import { StateUpdateListener } from "@/app/_lib/client/update/state";
 import { App_API_Client } from "@/app/api/app/client";
 import { AppTag } from "../tag/tag.cmp";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 
@@ -76,13 +76,18 @@ export function Header({categories, query, tags: _tags, onUpdateQuery}: HeaderPr
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--background-sub)] cursor-pointer"
                     onClick={() => {
                         if (session.data) {
-                            router.push("/profile")
+                            signOut();
+                            // router.push("/profile")
                         } else {
                             signIn("google")
                         }
                     }}
+                    title={
+                        session.data ?
+                        "ログアウト" : "ログイン"
+                    }
                 >
-                    <User size={18} color="#6b7280" strokeWidth={1.8} />
+                    <User size={18} color={session.data ? "oklch(74.6% 0.16 232.661)" : "#6b7280"} strokeWidth={1.8} />
                 </button>
                 <div className="flex-1 relative">
                     <SearchBar keywork={currentQuery.title ?? ""} tags={tags}

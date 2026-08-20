@@ -46,11 +46,11 @@ export function PageClient({ data }: PageClientProps) {
                                 setApi_Requesting(false);
                             }
                         }}
-                        className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:scale-95"
+                        className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 active:scale-95 cursor-pointer"
                     >
                         {
                             api_requesting ?
-                            <Loader2 size={16} strokeWidth={2.5}/> :
+                            <Loader2 size={16} strokeWidth={2.5} className="animate-spin"/> :
                             <Plus size={16} strokeWidth={2.5} />
                         }
                         作成
